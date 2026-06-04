@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlumnConnect — IUIU</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #09090b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 420px
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 28px
+    }
+
+    .logo-ring {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #006633, #004d2c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      font-size: 26px
+    }
+
+    .logo h1 {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.4px
+    }
+
+    .logo p {
+      color: #71717a;
+      font-size: 13px;
+      margin-top: 3px
+    }
+
+    .card {
+      background: #181b18;
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 28px
+    }
+
+    .tabs {
+      display: flex;
+      background: #09090b;
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 24px
+    }
+
+    .tab {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: .2s;
+      background: transparent;
+      color: #71717a
+    }
+
+    .tab.active {
+      background: #006633;
+      color: #fff
+    }
+
+    .fg {
+      margin-bottom: 14px
+    }
+
+    .fg label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a1a1aa;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .fg input,
+    .fg select,
+    .fg textarea {
+      width: 100%;
+      background: #09090b;
+      border: 1px solid #27272a;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #fafafa;
+      outline: none;
+      transition: .15s
+    }
+
+    .fg input:focus,
+    .fg select:focus,
+    .fg textarea:focus {
+      border-color: #006633;
+      box-shadow: 0 0 0 3px #00663325;
+    }
+
+    .fg input::placeholder,
+    .fg textarea::placeholder {
+      color: #52525b
+    }
+
+    .fg select option {
+      background: #181b18
+    }
+
+    .fg textarea {
+      resize: none
+    }
+
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #006633, #004d2c);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: .15s
+    }
+
+    .btn:hover {
+      opacity: .9;
+      transform: translateY(-1px)
+    }
+
+    .err {
+      background: #1c0a0a;
+      border: 1px solid #7f1d1d;
+      color: #fca5a5;
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 12px;
+      margin-bottom: 14px;
+      display: none
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="logo">
+      <div class="logo-ring">🎓</div>
+      <h1>AlumnConnect</h1>
+      <p>Islamic University in Uganda</p>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <!-- Fixed Go template syntax -->
+        <button class="tab {{if eq .Mode `login`}}active{{end}}" onclick="sw('login')">
+          Sign in
+        </button>
+
+        <button class="tab {{if eq .Mode `signup`}}active{{end}}" onclick="sw('signup')">
+          Create account
+        </button>
+      </div>
+
+      <div id="err" class="err"></div>
+
+      <!-- Login section -->
+      <div id="lf" style="display:{{if eq .Mode `login`}}block{{else}}none{{end}}">
+        <div class="fg">
+          <label>Email</label>
+          <input id="le" type="email" placeholder="you@email.com" value="{{.Email}}">
+        </div>
+
+        <div class="fg">
+          <label>Password</label>
+          <input id="lp" type="password" placeholder="••••••••">
+        </div>
+
+        <button class="btn" onclick="doLogin()">Sign in</button>
+      </div>
+
+      <!-- Signup section -->
+
+      <div id="sf" style="display:{{if eq .Mode `signup`}}block{{else}}none{{end}}">
+        <div class="fg">
+          <label>Full name</label>
+          <input id="sn" type="text" placeholder="Full name">
+        </div>
+
+        <div class="fg">
+          <label>Email</label>
+          <input id="se" type="email" placeholder="you@email.com">
+        </div>
+
+        <div class="row2">
+          <div class="fg">
+            <label>I am a</label>
+            <select id="sr">
+              <option value="student">Student</option>
+              <option value="alumni">Alumni</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+
+          <div class="fg">
+            <label>Grad year</label>
+            <input id="sy" type="text" placeholder="2024">
+          </div>
+
+        </div>
+
+        <div class="fg">
+          <label>Faculty</label>
+          <select id="sf2">
+            <option value="">Select faculty</option>
+            {{range .Faculties}}
+            <option>{{.}}</option>
+            {{end}}
+          </select>
+        </div>
+
+        <div class="fg">
+          <label>Bio</label>
+          <textarea id="sb" rows="2" placeholder="Tell the community about yourself..."></textarea>
+        </div>
+
+        <div class="fg">
+          <label>Password</label>
+          <input id="sp" type="password" placeholder="Min 6 characters">
+        </div>
+
+        <button class="btn" onclick="doSignup()">Create account</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    function sw(t) {
+      document.getElementById("lf").style.display = t === "login" ? "block" : "none";
+
+      document.getElementById("sf").style.display = t === "signup" ? "block" : "none";
+
+      document.querySelectorAll(".tab").forEach((el, i) => {
+        el.classList.toggle(
+          "active",
+          (t === "login" && i === 0) ||
+          (t === "signup" && i === 1)
+        )
+      });
+
+      document.getElementById("err").style.display = "none";
+    }
+
+    function err(m) {
+      const e = document.getElementById("err");
+
+      e.textContent = m;
+      e.style.display = "block";
+    }
+
+    async function doLogin() {
+      const email = document.getElementById("le").value;
+
+      const password = document.getElementById("lp").value;
+
+      const r = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const d = await r.json();
+
+      if (d.ok) {
+        window.location = "/feed";
+      } else {
+        err(d.error);
+      }
+    }
+
+    async function doSignup() {
+      const payload = {
+        name: document.getElementById("sn").value,
+
+        email: document.getElementById("se").value,
+
+        password: document.getElementById("sp").value,
+
+        role: document.getElementById("sr").value,
+
+        faculty: document.getElementById("sf2").value,
+
+        grad_year: document.getElementById("sy").value,
+
+        bio: document.getElementById("sb").value
+      };
+
+      const r = await fetch("/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const d = await r.json();
+
+      if (d.ok) {
+        window.location = "/feed";
+      } else {
+        err(d.error);
+      }
+    }
+  </script>
+
+</body>
+
+</html>
