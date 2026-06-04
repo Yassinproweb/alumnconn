@@ -26,6 +26,11 @@ func Login(c *echo.Context) error {
 			"Medicine",
 			"Arts",
 		},
+		"Role": []string{
+			"Alumni",
+			"Student",
+			"Staff",
+		},
 	})
 }
 
@@ -40,6 +45,11 @@ func SignUp(c *echo.Context) error {
 			"Law",
 			"Medicine",
 			"Arts",
+		},
+		"Role": []string{
+			"Alumni",
+			"Student",
+			"Staff",
 		},
 	})
 }

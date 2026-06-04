@@ -35,8 +35,8 @@ func main() {
 
 	tmpl := template.Must(template.ParseFS(
 		templateFS,
-		"views/*.html",          // index.html and main.html
-		"views/partials/*.html", // POS UI partials
+		"views/*.html",          // index.html and oyher pages
+		"views/partials/*.html", // partials
 	))
 
 	e.Renderer = &TemplateRenderer{

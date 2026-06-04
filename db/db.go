@@ -27,7 +27,6 @@ func ConnectDB() {
 	}
 
 	createTables()
-	SeedDB()
 
 	log.Println("SQLite Connected")
 }
@@ -46,4 +45,9 @@ func createTables() {
 			bio TEXT NOT NULL,
 		)
 	`
+
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
