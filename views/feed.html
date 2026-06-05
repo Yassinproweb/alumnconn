@@ -330,8 +330,9 @@
           </div>
         </div>
       </div>
-      <input type="file" id="post-photo-input" accept="image/*,video/*" onchange="attachPostFile(this,'photo')">
-      <input type="file" id="post-doc-input" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+      <input type="file" id="post-photo-input" name="image" accept="image/*,video/*"
+        onchange="attachPostFile(this,'photo')">
+      <input type="file" id="post-doc-input" name="doc" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
         onchange="attachPostFile(this,'doc')">
       <div id="posts-list"></div>
     </div>

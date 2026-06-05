@@ -74,6 +74,8 @@ func main() {
 	api.GET("/posts", handlers.GetPosts)
 	api.POST("/posts", handlers.CreatePost)
 	api.POST("/posts/:id/like", handlers.LikePost)
+	api.POST("/me/avatar", handlers.UploadAvatar)
+	api.POST("/chat", handlers.ChatBot)
 
 	// Users
 	api.GET("/users", handlers.GetUsers)

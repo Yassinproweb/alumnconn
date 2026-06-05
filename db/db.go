@@ -41,8 +41,33 @@ func createTables() {
 			role TEXT NOT NULL,
 			faculty TEXT NOT NULL,
 			entry_year TEXT NOT NULL,
-			bio TEXT
-		)
+			bio TEXT,
+			avatar TEXT,
+			avatar_color TEXT DEFAULT '#006633'
+		);
+
+	  CREATE TABLE IF NOT EXISTS posts(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      content TEXT,
+      image TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+      FOREIGN KEY(user_id)
+      REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS likes(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      post_id INTEGER NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+      UNIQUE(user_id, post_id),
+
+      FOREIGN KEY(user_id) REFERENCES users(id),
+      FOREIGN KEY(post_id) REFERENCES posts(id)
+    );
 	`
 
 	_, err := DB.Exec(query)
