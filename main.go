@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/Yassinproweb/alumnconn/db"
 	"github.com/Yassinproweb/alumnconn/handlers"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
@@ -27,6 +28,7 @@ func (t *TemplateRenderer) Render(c *echo.Context, w io.Writer, name string, dat
 }
 
 func main() {
+	db.ConnectDB()
 	e := echo.New()
 
 	e.Static("/", "static")

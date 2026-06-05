@@ -23,6 +23,13 @@
       padding: 20px
     }
 
+    /* Warning: Non-standard. Works primarily in Chrome/Safari/Edge */
+    .year-only::-webkit-datetime-edit-day-field,
+    .year-only::-webkit-datetime-edit-month-field,
+    .year-only::-webkit-datetime-edit-text {
+      display: none;
+    }
+
     .wrap {
       width: 100%;
       max-width: 420px
@@ -195,7 +202,7 @@
           Sign in
         </button>
 
-        <button class="tab {{if eq .Mode `signup`}}active{{end}}" onclick="sw('signup')">
+        <button class="tab {{if eq .Mode `register`}}active{{end}}" onclick="sw('register')">
           Create account
         </button>
       </div>
@@ -204,7 +211,7 @@
 
       <!-- Login section -->
       <div id="lf" style="display:{{if eq .Mode `login`}}block{{else}}none{{end}}">
-        <form class="">
+        <form method="post" hx-post="/login" hx-swap="none" class="">
           <div class="fg">
             <label for="email">Email</label>
             <input id="le" type="email" name="email" placeholder="you@email.com" value="{{.Email}}">
@@ -215,16 +222,16 @@
             <input id="lp" type="password" placeholder="••••••••" name="password">
           </div>
 
-          <button class="btn" onclick="doLogin()" type="submit">Sign in</button>
+          <button class="btn" type="submit">Sign in</button>
         </form>
       </div>
 
       <!-- Register section -->
       <div id="sf" style="display:{{if eq .Mode `register`}}block{{else}}none{{end}}">
-        <form class="">
+        <form method="post" hx-post="/register" hx-swap="none" class="">
           <div class="fg">
             <label for="name">Full name</label>
-            <input id="sn" name="name" type="text" required placeholder="Full name">
+            <input id="sn" name="username" type="text" required placeholder="Full name">
           </div>
 
           <div class="fg">
@@ -234,7 +241,7 @@
 
           <div class="row2">
             <div class="fg">
-              <label for="role">I am a</label>
+              <label for="role">I am a/an</label>
               <select id="sr" name="role" required>
                 <option value="student">Student</option>
                 <option value="alumni">Alumni</option>
@@ -244,7 +251,7 @@
 
             <div class="fg">
               <label for="entryYear">Entry Year</label>
-              <input id="sy" name="entryYear" type="date" required placeholder="2024">
+              <input id="sy" name="entryYear" type="number" required placeholder="2024">
             </div>
           </div>
 
@@ -268,24 +275,22 @@
             <input id="sp" name="password" type="password" required placeholder="Min 6 characters">
           </div>
 
-          <button class="btn" onclick="doRegister()" type="submit">Create account</button>
+          <button class="btn" type="submit">Create account</button>
         </form>
       </div>
     </div>
   </div>
 
   <script>
-
     function sw(t) {
       document.getElementById("lf").style.display = t === "login" ? "block" : "none";
-
-      document.getElementById("sf").style.display = t === "signup" ? "block" : "none";
+      document.getElementById("sf").style.display = t === "register" ? "block" : "none";
 
       document.querySelectorAll(".tab").forEach((el, i) => {
         el.classList.toggle(
           "active",
           (t === "login" && i === 0) ||
-          (t === "signup" && i === 1)
+          (t === "register" && i === 1)
         )
       });
 
@@ -297,60 +302,6 @@
 
       e.textContent = m;
       e.style.display = "block";
-    }
-
-    async function doLogin() {
-      const email = document.getElementById("le").value;
-
-      const password = document.getElementById("lp").value;
-
-      const r = await fetch("/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          email,
-          password
-        })
-      });
-
-      const d = await r.json();
-
-      if (d.ok) {
-        window.location = "/feed";
-      } else {
-        err(d.error);
-      }
-    }
-
-    async function doRegister() {
-      const payload = {
-        name: document.getElementById("sn").value,
-        email: document.getElementById("se").value,
-        password: document.getElementById("sp").value,
-        role: document.getElementById("sr").value,
-        faculty: document.getElementById("sf2").value,
-        grad_year: document.getElementById("sy").value,
-        bio: document.getElementById("sb").value
-      };
-
-      const r = await fetch("/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const d = await r.json();
-
-      if (d.ok) {
-        window.location = "/feed";
-      } else {
-        err(d.error);
-      }
     }
   </script>
 

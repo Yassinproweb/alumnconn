@@ -12,7 +12,7 @@ var DB *sql.DB
 func ConnectDB() {
 	var err error
 
-	DB, err = sql.Open("sqlite3", "./pos.db")
+	DB, err = sql.Open("sqlite3", "./users.db")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,10 +34,9 @@ func ConnectDB() {
 func createTables() {
 	query := `
 		CREATE TABLE IF NOT EXISTS users(
-			id INT PRIMARY KEY AUTOINCREMENT,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			username TEXT NOT NULL,
 			email TEXT UNIQUE NOT NULL,
-			name TEXT NOT NULL,
 			password TEXT NOT NULL,
 			role TEXT NOT NULL,
 			faculty TEXT NOT NULL,

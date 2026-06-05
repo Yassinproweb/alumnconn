@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/Yassinproweb/alumnconn/db"
@@ -40,7 +41,7 @@ func LoginForm(c *echo.Context) error {
 
 func RegisterForm(c *echo.Context) error {
 	return c.Render(200, "auth.html", map[string]any{
-		"Mode": "signup",
+		"Mode": "register",
 		"Faculties": []string{
 			"Science",
 			"Engineering",
@@ -64,7 +65,17 @@ func RegisterUser(c *echo.Context) error {
 		return c.String(http.StatusBadRequest, "Invalid User Request")
 	}
 
+	req.Name = c.FormValue("username")
+	req.Email = c.FormValue("email")
+	req.Password = c.FormValue("password")
+	req.Role = c.FormValue("role")
+	req.Faculty = c.FormValue("faculty")
+	req.EntryYear = c.FormValue("entryYear")
+	req.Bio = c.FormValue("bio")
+
+	fmt.Println(req.Name, req.Email, req.Password, req.Role, req.Faculty, req.EntryYear, req.Bio)
 	if req.Name == "" || req.Email == "" || req.Password == "" || req.Role == "" || req.Faculty == "" || req.EntryYear == "" {
+		fmt.Println(req.Name, req.Email, req.Password, req.Role, req.Faculty, req.EntryYear, req.Bio)
 		return c.String(http.StatusBadRequest, "Missing a vital form field")
 	}
 
