@@ -35,8 +35,6 @@ html {
 
 body {
   font-family: 'DM Sans';
-  background: var(--ivory);
-  color: var(--charcoal);
   overflow-x: hidden;
 }
 
@@ -66,15 +64,6 @@ h6 {
 }
 
 /* ── NAVIGATION ── */
-nav {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  background: var(--white);
-  border-bottom: 3px solid var(--green);
-  box-shadow: 0 2px 20px rgba(0, 102, 51, 0.08);
-}
-
 .nav-inner {
   max-width: 1280px;
   margin: 0 auto;

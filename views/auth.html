@@ -5,259 +5,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AlumnConnect — IUIU</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fmnts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.min.css">
+  <script src="/js/htmx.min.js" defer></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #09090b;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px
-    }
-
-    /* Warning: Non-standard. Works primarily in Chrome/Safari/Edge */
+    /* year-only input: non-standard, Chrome/Safari/Edge only */
     .year-only::-webkit-datetime-edit-day-field,
     .year-only::-webkit-datetime-edit-month-field,
     .year-only::-webkit-datetime-edit-text {
       display: none;
     }
 
-    .wrap {
-      width: 100%;
-      max-width: 420px
-    }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 28px
-    }
-
-    .logo-ring {
-      width: 60px;
-      height: 60px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #006633, #004d2c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 14px;
-      font-size: 26px
-    }
-
-    .logo h1 {
-      color: #fff;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -.4px
-    }
-
-    .logo p {
-      color: #71717a;
-      font-size: 13px;
-      margin-top: 3px
-    }
-
-    .card {
-      background: #181b18;
-      border: 1px solid #27272a;
-      border-radius: 20px;
-      padding: 28px
-    }
-
-    .tabs {
-      display: flex;
-      background: #09090b;
-      border-radius: 10px;
-      padding: 3px;
-      margin-bottom: 24px
-    }
-
-    .tab {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: .2s;
-      background: transparent;
-      color: #71717a
-    }
-
-    .tab.active {
-      background: #006633;
-      color: #fff
-    }
-
-    .fg {
-      margin-bottom: 14px
-    }
-
-    .fg label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      color: #a1a1aa;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: .5px
-    }
-
-    .fg input,
-    .fg select,
-    .fg textarea {
-      width: 100%;
-      background: #09090b;
-      border: 1px solid #27272a;
-      border-radius: 10px;
-      padding: 10px 13px;
-      font-family: inherit;
-      font-size: 14px;
-      color: #fafafa;
+    /* Custom green focus ring using CSS variable */
+    .focus-green:focus {
       outline: none;
-      transition: .15s
-    }
-
-    .fg input:focus,
-    .fg select:focus,
-    .fg textarea:focus {
       border-color: #006633;
-      box-shadow: 0 0 0 3px #00663325;
+      box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.18);
     }
 
-    .fg input::placeholder,
-    .fg textarea::placeholder {
-      color: #52525b
+    /* HTMX loading indicator */
+    .htmx-indicator {
+      display: none;
     }
 
-    .fg select option {
-      background: #181b18
+    .htmx-request .htmx-indicator {
+      display: inline-block;
     }
 
-    .fg textarea {
-      resize: none
-    }
-
-    .row2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px
-    }
-
-    .btn {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #006633, #004d2c);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 6px;
-      transition: .15s
-    }
-
-    .btn:hover {
-      opacity: .9;
-      transform: translateY(-1px)
-    }
-
-    .err {
-      background: #1c0a0a;
-      border: 1px solid #7f1d1d;
-      color: #fca5a5;
-      border-radius: 8px;
-      padding: 9px 13px;
-      font-size: 12px;
-      margin-bottom: 14px;
-      display: none
+    .htmx-request.htmx-indicator {
+      display: inline-block;
     }
   </style>
 </head>
 
-<body>
-  <div class="wrap">
-    <div class="logo">
-      <div class="logo-ring">🎓</div>
-      <h1>AlumnConnect</h1>
-      <p>Islamic University in Uganda</p>
+<body class="bg-[#09090b] min-h-screen flex items-center justify-center p-5 font-sans">
+
+  <div class="w-full max-w-[420px]">
+
+    <!-- Logo -->
+    <div class="text-center mb-7">
+      <div
+        class="size-14 rounded-[18px] bg-gradient-to-br from-[#006633] to-[#004d2c] flex items-center justify-center mx-auto mb-3.5 text-[26px]">
+        <i class="hgi hgi-stroke hgi-graduate-male text-5xl text-green_pale"></i>
+      </div>
+      <h1 class="text-white text-[22px] font-bold tracking-tight font-serif">AlumnConnect</h1>
+      <p class="text-green_pale text-base mt-1">Islamic University in Uganda</p>
     </div>
 
-    <div class="card">
-      <div class="tabs">
-        <!-- Fixed Go template syntax -->
-        <button class="tab {{if eq .Mode `login`}}active{{end}}" onclick="sw('login')">
+    <!-- Card -->
+    <div class="bg-[#181b18] border border-zinc-800 rounded-[20px] p-7">
+
+      <!-- Tabs -->
+      <div class="flex bg-[#09090b] rounded-[10px] p-[3px] mb-6">
+        <button id="tab-login"
+          class="flex-1 py-2 rounded-lg text-base font-medium cursor-pointer transition-all duration-200 {{ if eq .Mode `login` }}bg-[#006633] text-white{{ else }}bg-transparent text-green_pale hover:text-green_mid{{ end }}"
+          onclick="sw('login')">
           Sign in
         </button>
-
-        <button class="tab {{if eq .Mode `register`}}active{{end}}" onclick="sw('register')">
+        <button id="tab-register"
+          class="flex-1 py-2 rounded-lg text-base font-medium cursor-pointer transition-all duration-200 {{ if eq .Mode `register` }}bg-[#006633] text-white{{ else }}bg-transparent text-green_pale hover:text-green_mid{{ end }}"
+          onclick="sw('register')">
           Create account
         </button>
       </div>
 
-      <div id="err" class="err"></div>
+      <!-- Error banner -->
+      <div id="err"
+        class="hidden bg-[#1c0a0a] border border-red-900 text-red-300 rounded-lg px-3.5 py-2.5 text-xs mb-3.5"></div>
 
-      <!-- Login section -->
+      <!-- ── LOGIN FORM ── -->
       <div id="lf" style="display:{{if eq .Mode `login`}}block{{else}}none{{end}}">
-        <form method="post" hx-post="/login" hx-swap="none" class="">
-          <div class="fg">
-            <label for="email">Email</label>
-            <input id="le" type="email" name="email" placeholder="you@email.com" value="{{.Email}}">
+        <form method="post" hx-post="/login" hx-swap="none" hx-on::after-request="handleResponse(event, 'login')">
+
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Email</label>
+            <input type="email" name="email" placeholder="you@email.com" value="{{.Email}}"
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150">
           </div>
 
-          <div class="fg">
-            <label for="lp">Password</label>
-            <input id="lp" type="password" placeholder="••••••••" name="password">
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Password</label>
+            <input type="password" name="password" placeholder="••••••••"
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150">
           </div>
 
-          <button class="btn" type="submit">Sign in</button>
+          <button type="submit"
+            class="w-full mt-1.5 py-3 bg-gradient-to-br from-[#006633] to-[#004d2c] border-none rounded-[10px] text-white text-[14px] font-semibold cursor-pointer transition-all duration-150 hover:opacity-90 hover:-translate-y-px flex items-center justify-center gap-2">
+            <span>Sign in</span>
+            <span class="htmx-indicator animate-spin text-xs">⏳</span>
+          </button>
         </form>
       </div>
 
-      <!-- Register section -->
+      <!-- ── REGISTER FORM ── -->
       <div id="sf" style="display:{{if eq .Mode `register`}}block{{else}}none{{end}}">
-        <form method="post" hx-post="/register" hx-swap="none" class="">
-          <div class="fg">
-            <label for="name">Full name</label>
-            <input id="sn" name="username" type="text" required placeholder="Full name">
+        <form method="post" hx-post="/register" hx-swap="none" hx-on::after-request="handleResponse(event, 'register')">
+
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Full
+              name</label>
+            <input name="username" type="text" required placeholder="Full name"
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150">
           </div>
 
-          <div class="fg">
-            <label for="email">Email</label>
-            <input id="se" name="email" type="email" required placeholder="you@email.com">
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Email</label>
+            <input name="email" type="email" required placeholder="you@email.com"
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150">
           </div>
 
-          <div class="row2">
-            <div class="fg">
-              <label for="role">I am a/an</label>
-              <select id="sr" name="role" required>
+          <div class="grid grid-cols-2 gap-2.5 mb-3.5">
+            <div>
+              <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">I am
+                a/an</label>
+              <select name="role" required
+                class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 transition-all duration-150 [&>option]:bg-[#181b18]">
                 <option value="student">Student</option>
                 <option value="alumni">Alumni</option>
                 <option value="staff">Staff</option>
               </select>
             </div>
-
-            <div class="fg">
-              <label for="entryYear">Entry Year</label>
-              <input id="sy" name="entryYear" type="number" required placeholder="2024">
+            <div>
+              <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Entry
+                Year</label>
+              <input name="entryYear" type="number" required placeholder="2024" min="1988" max="2030"
+                class="focus-green year-only w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150">
             </div>
           </div>
 
-          <div class="fg">
-            <label for="faculty">Faculty</label>
-            <select id="sf2" name="faculty" required>
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Faculty</label>
+            <select name="faculty" required
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 transition-all duration-150 [&>option]:bg-[#181b18]">
               <option value="">Select faculty</option>
               {{range .Faculties}}
               <option>{{.}}</option>
@@ -265,43 +149,61 @@
             </select>
           </div>
 
-          <div class="fg">
-            <label for="bio">Bio</label>
-            <textarea id="sb" name="bio" rows="2" placeholder="Tell the community about yourself..."></textarea>
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Bio</label>
+            <textarea name="bio" rows="2" placeholder="Tell the community about yourself..."
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150 resize-none"></textarea>
           </div>
 
-          <div class="fg">
-            <label for="password">Password</label>
-            <input id="sp" name="password" type="password" required placeholder="Min 6 characters">
+          <div class="mb-3.5">
+            <label class="block text-[11px] font-semibold text-white mb-1.5 uppercase tracking-wide">Password</label>
+            <input name="password" type="password" required placeholder="Min 6 characters"
+              class="focus-green w-full bg-[#09090b] border border-zinc-800 rounded-[10px] px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder-zinc-600 transition-all duration-150">
           </div>
 
-          <button class="btn" type="submit">Create account</button>
+          <button type="submit"
+            class="w-full mt-1.5 py-3 bg-gradient-to-br from-[#006633] to-[#004d2c] border-none rounded-[10px] text-white text-[14px] font-semibold cursor-pointer transition-all duration-150 hover:opacity-90 hover:-translate-y-px flex items-center justify-center gap-2">
+            <span>Create account</span>
+            <span class="htmx-indicator animate-spin text-xs">⏳</span>
+          </button>
         </form>
       </div>
+
     </div>
   </div>
 
   <script>
     function sw(t) {
-      document.getElementById("lf").style.display = t === "login" ? "block" : "none";
-      document.getElementById("sf").style.display = t === "register" ? "block" : "none";
+      document.getElementById('lf').style.display = t === 'login' ? 'block' : 'none';
+      document.getElementById('sf').style.display = t === 'register' ? 'block' : 'none';
 
-      document.querySelectorAll(".tab").forEach((el, i) => {
-        el.classList.toggle(
-          "active",
-          (t === "login" && i === 0) ||
-          (t === "register" && i === 1)
-        )
+      const activeClasses = ['bg-[#006633]', 'text-white'];
+      const inactiveClasses = ['bg-transparent', 'text-green_pale', 'hover:text-green_mid'];
+
+      document.querySelectorAll('#tab-login, #tab-register').forEach((btn, i) => {
+        const isActive = (t === 'login' && i === 0) || (t === 'register' && i === 1);
+        btn.classList.toggle('bg-\\[\\#006633\\]', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('text-green_pale', !isActive);
       });
 
-      document.getElementById("err").style.display = "none";
+      showErr('');
     }
 
-    function err(m) {
-      const e = document.getElementById("err");
+    function showErr(m) {
+      const e = document.getElementById('err');
+      if (m) {e.textContent = m; e.classList.remove('hidden');}
+      else {e.classList.add('hidden');}
+    }
 
-      e.textContent = m;
-      e.style.display = "block";
+    function handleResponse(evt, mode) {
+      const xhr = evt.detail.xhr;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        // On success — redirect to feed
+        window.location.href = '/feed';
+      } else {
+        showErr(xhr.responseText || 'Something went wrong. Please try again.');
+      }
     }
   </script>
 

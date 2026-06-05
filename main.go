@@ -35,11 +35,10 @@ func main() {
 
 	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Recover())
-	// e.Use(middleware.CORS())
 
 	tmpl := template.Must(template.ParseFS(
 		templateFS,
-		"views/*.html",          // index.html and oyher pages
+		"views/*.html",          // index.html and other pages
 		"views/partials/*.html", // partials
 	))
 
@@ -47,25 +46,39 @@ func main() {
 		templates: tmpl,
 	}
 
+	// ── Landing page ──
 	e.GET("/", func(c *echo.Context) error {
 		return c.Render(http.StatusOK, "index.html", nil)
 	})
 
+	// ── Health ──
 	e.GET("/health", handlers.Health)
+
+	// ── Auth pages ──
 	e.GET("/login", handlers.LoginForm)
 	e.GET("/register", handlers.RegisterForm)
-
 	e.POST("/register", handlers.RegisterUser)
 	e.POST("/login", handlers.LoginUser)
+	e.GET("/logout", handlers.Logout)
 
+	// ── Feed (requires session) ──
+	e.GET("/feed", handlers.FeedPage)
+
+	// ── API ──
 	api := e.Group("/api")
+
+	// Current user — called by feed.html on init
+	api.GET("/me", handlers.GetMe)
+
+	// Posts
 	api.GET("/posts", handlers.GetPosts)
 	api.POST("/posts", handlers.CreatePost)
 	api.POST("/posts/:id/like", handlers.LikePost)
 
+	// Users
 	api.GET("/users", handlers.GetUsers)
 
-	if err := e.Start("0.0.0.0:7000"); err != nil {
+	if err := e.Start("0.0.0.0:8000"); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}
 }

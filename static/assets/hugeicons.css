@@ -1,7 +1,9 @@
 @font-face {
   font-family: "hugeicons-stroke-rounded";
-  src: url("hgi-stroke-rounded.woff") format("woff"); /* iOS 4.1- */
+  src: url("./hgi-stroke-rounded.woff") format("woff");
+  /* iOS 4.1- */
 }
+
 .hgi-stroke {
   font-family: "hugeicons-stroke-rounded" !important;
   font-style: normal;
