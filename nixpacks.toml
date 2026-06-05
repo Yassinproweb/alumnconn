@@ -1,0 +1,23 @@
+# Tell Nixpacks to install both Go and Node/pnpm runtimes
+[providers]
+go = {}
+node = {}
+
+# Set up variables for pnpm
+[variables]
+COREPACK_ENABLE_DOWNLOAD_PROMPT = "0"
+
+# Install both sets of dependencies
+[phases.install]
+dependsOn = ['setup']
+cmds = ['corepack enable pnpm', 'pnpm install', 'go mod tidy']
+
+# Run the Tailwind build first, then compile the Go binary
+[phases.build]
+dependsOn = ['install']
+cmds = ['pnpm run build', 'go build -o main .']
+
+# Set the start command to execute the Echo server
+[phases.start]
+cmds = ['./main']
+
