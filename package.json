@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "tailwindcss -i ./static/css/input.css -o ./static/css/style.min.css --minify",
+    "watch": "tailwindcss -i ./static/css/input.css -o ./static/css/style.min.css --minify -w"
+  },
+	"devDependencies": {
+		"tailwindcss": "^3.4.19"
+	}
+}

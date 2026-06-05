@@ -204,70 +204,72 @@
 
       <!-- Login section -->
       <div id="lf" style="display:{{if eq .Mode `login`}}block{{else}}none{{end}}">
-        <div class="fg">
-          <label>Email</label>
-          <input id="le" type="email" placeholder="you@email.com" value="{{.Email}}">
-        </div>
+        <form class="">
+          <div class="fg">
+            <label for="email">Email</label>
+            <input id="le" type="email" name="email" placeholder="you@email.com" value="{{.Email}}">
+          </div>
 
-        <div class="fg">
-          <label>Password</label>
-          <input id="lp" type="password" placeholder="••••••••">
-        </div>
+          <div class="fg">
+            <label for="lp">Password</label>
+            <input id="lp" type="password" placeholder="••••••••" name="password">
+          </div>
 
-        <button class="btn" onclick="doLogin()">Sign in</button>
+          <button class="btn" onclick="doLogin()" type="submit">Sign in</button>
+        </form>
       </div>
 
-      <!-- Signup section -->
-
-      <div id="sf" style="display:{{if eq .Mode `signup`}}block{{else}}none{{end}}">
-        <div class="fg">
-          <label>Full name</label>
-          <input id="sn" type="text" placeholder="Full name">
-        </div>
-
-        <div class="fg">
-          <label>Email</label>
-          <input id="se" type="email" placeholder="you@email.com">
-        </div>
-
-        <div class="row2">
+      <!-- Register section -->
+      <div id="sf" style="display:{{if eq .Mode `register`}}block{{else}}none{{end}}">
+        <form class="">
           <div class="fg">
-            <label>I am a</label>
-            <select id="sr">
-              <option value="student">Student</option>
-              <option value="alumni">Alumni</option>
-              <option value="staff">Staff</option>
+            <label for="name">Full name</label>
+            <input id="sn" name="name" type="text" required placeholder="Full name">
+          </div>
+
+          <div class="fg">
+            <label for="email">Email</label>
+            <input id="se" name="email" type="email" required placeholder="you@email.com">
+          </div>
+
+          <div class="row2">
+            <div class="fg">
+              <label for="role">I am a</label>
+              <select id="sr" name="role" required>
+                <option value="student">Student</option>
+                <option value="alumni">Alumni</option>
+                <option value="staff">Staff</option>
+              </select>
+            </div>
+
+            <div class="fg">
+              <label for="entryYear">Entry Year</label>
+              <input id="sy" name="entryYear" type="date" required placeholder="2024">
+            </div>
+          </div>
+
+          <div class="fg">
+            <label for="faculty">Faculty</label>
+            <select id="sf2" name="faculty" required>
+              <option value="">Select faculty</option>
+              {{range .Faculties}}
+              <option>{{.}}</option>
+              {{end}}
             </select>
           </div>
 
           <div class="fg">
-            <label>Grad year</label>
-            <input id="sy" type="text" placeholder="2024">
+            <label for="bio">Bio</label>
+            <textarea id="sb" name="bio" rows="2" placeholder="Tell the community about yourself..."></textarea>
           </div>
 
-        </div>
+          <div class="fg">
+            <label for="password">Password</label>
+            <input id="sp" name="password" type="password" required placeholder="Min 6 characters">
+          </div>
 
-        <div class="fg">
-          <label>Faculty</label>
-          <select id="sf2">
-            <option value="">Select faculty</option>
-            {{range .Faculties}}
-            <option>{{.}}</option>
-            {{end}}
-          </select>
-        </div>
-
-        <div class="fg">
-          <label>Bio</label>
-          <textarea id="sb" rows="2" placeholder="Tell the community about yourself..."></textarea>
-        </div>
-
-        <div class="fg">
-          <label>Password</label>
-          <input id="sp" type="password" placeholder="Min 6 characters">
-        </div>
-
-        <button class="btn" onclick="doSignup()">Create account</button>
+          <button class="btn" onclick="doRegister()" type="submit">Create account</button>
+        </form>
       </div>
     </div>
   </div>
@@ -323,7 +325,7 @@
       }
     }
 
-    async function doSignup() {
+    async function doRegister() {
       const payload = {
         name: document.getElementById("sn").value,
         email: document.getElementById("se").value,
@@ -334,7 +336,7 @@
         bio: document.getElementById("sb").value
       };
 
-      const r = await fetch("/signup", {
+      const r = await fetch("/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

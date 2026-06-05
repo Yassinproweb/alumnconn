@@ -35,14 +35,14 @@ func createTables() {
 	query := `
 		CREATE TABLE IF NOT EXISTS users(
 			id INT PRIMARY KEY AUTOINCREMENT,
-			name TEXT NOT NULL,
+			username TEXT NOT NULL,
 			email TEXT UNIQUE NOT NULL,
 			name TEXT NOT NULL,
 			password TEXT NOT NULL,
 			role TEXT NOT NULL,
 			faculty TEXT NOT NULL,
-			grad_year TEXT NOT NULL,
-			bio TEXT NOT NULL,
+			entry_year TEXT NOT NULL,
+			bio TEXT
 		)
 	`
 

@@ -29,6 +29,8 @@ func (t *TemplateRenderer) Render(c *echo.Context, w io.Writer, name string, dat
 func main() {
 	e := echo.New()
 
+	e.Static("/", "static")
+
 	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Recover())
 	// e.Use(middleware.CORS())
@@ -48,8 +50,11 @@ func main() {
 	})
 
 	e.GET("/health", handlers.Health)
-	e.POST("/login", handlers.Login)
-	e.POST("/signup", handlers.SignUp)
+	e.GET("/login", handlers.LoginForm)
+	e.GET("/register", handlers.RegisterForm)
+
+	e.POST("/register", handlers.RegisterUser)
+	e.POST("/login", handlers.LoginUser)
 
 	api := e.Group("/api")
 	api.GET("/posts", handlers.GetPosts)
