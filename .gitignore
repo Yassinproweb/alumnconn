@@ -1,2 +1,9 @@
 tmp/
 node_modules/
+node_modules
+.git
+tmp
+.air.toml
+pos.db
+pos.db-shm
+pos.db-wal
