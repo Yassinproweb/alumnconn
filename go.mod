@@ -3,6 +3,7 @@ module github.com/Yassinproweb/alumnconn
 go 1.26.2
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v5 v5.1.1
 	github.com/mattn/go-sqlite3 v1.14.44
 	golang.org/x/crypto v0.52.0

@@ -454,9 +454,6 @@
           <button onclick="aiChip('How do I get my transcript?')"
             class="bg-[#272a27] border border-[#3f463f] text-[#6b7280] text-xs font-medium px-3 py-[5px] rounded-[20px] cursor-pointer whitespace-nowrap shrink-0 hover:border-[#006633] hover:text-[#006633] transition-all font-['DM_Sans',sans-serif]">📄
             Transcript</button>
-          <button onclick="aiChip('I want to become a mentor')"
-            class="bg-[#272a27] border border-[#3f463f] text-[#6b7280] text-xs font-medium px-3 py-[5px] rounded-[20px] cursor-pointer whitespace-nowrap shrink-0 hover:border-[#006633] hover:text-[#006633] transition-all font-['DM_Sans',sans-serif]">⭐
-            Be a mentor</button>
           <button onclick="aiChip('What alumni benefits do I have?')"
             class="bg-[#272a27] border border-[#3f463f] text-[#6b7280] text-xs font-medium px-3 py-[5px] rounded-[20px] cursor-pointer whitespace-nowrap shrink-0 hover:border-[#006633] hover:text-[#006633] transition-all font-['DM_Sans',sans-serif]">🎁
             Benefits</button>
@@ -941,10 +938,22 @@
       input.value = ''; input.style.height = 'auto';
       addAiMsg('user', text); aiHistory.push({role: 'user', content: text});
       document.getElementById('ai-typing').classList.add('show');
-      const r = await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({messages: aiHistory})});
-      const d = await r.json();
-      document.getElementById('ai-typing').classList.remove('show');
-      addAiMsg('bot', d.reply); aiHistory.push({role: 'assistant', content: d.reply});
+      try {
+        const r = await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({messages: aiHistory})});
+        const d = await r.json();
+        document.getElementById('ai-typing').classList.remove('show');
+        if (d.reply) {
+          addAiMsg('bot', d.reply);
+          aiHistory.push({role: 'assistant', content: d.reply});
+        } else {
+          aiHistory.pop(); // remove failed user msg so they can retry
+          addAiMsg('bot', '\u26a0\ufe0f ' + (d.error || 'Something went wrong. Please try again.'));
+        }
+      } catch (e) {
+        document.getElementById('ai-typing').classList.remove('show');
+        aiHistory.pop();
+        addAiMsg('bot', '\u26a0\ufe0f Could not reach the AI. Check your connection and try again.');
+      }
     }
     function aiChip(t) {document.getElementById('ai-input').value = t; aiSend();}
     function addAiMsg(role, text) {

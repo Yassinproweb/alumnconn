@@ -216,19 +216,27 @@ func UploadAvatar(c *echo.Context) error {
 }
 
 // ─── AI chat ──────────────────────────────────────────────────────────────────
+const iuiuSystemPrompt = `You are AlumnConnect AI — a precise, straight-to-the-point assistant for the Islamic University in Uganda (IUIU). 
 
-const iuiuSystemPrompt = `You are AlumnConnect AI, the official assistant for the Islamic University in Uganda (IUIU) alumni network.
+CRITICAL RULE: Keep all answers extremely brief and straight to the point (under 2-3 sentences maximum). Avoid any conversational filler, long summaries, or unnecessary fluff.
 
-IUIU background:
-- Founded in 1988 in Mbale, Uganda; the main campus is in Kampala (Kibuli). Other campuses: Female campus (Mbale), Arua campus, Kabale campus.
-- Faculties: Science, Engineering, Business & Management, Education, Law, Medicine & Health Sciences, Arts & Social Sciences, Islamic Studies.
-- Transcript requests: apply at the Registrar office on campus or via registrar@iuiu.ac.ug. Processing takes 5-10 working days.
-- Alumni benefits: career fair invitations, the AlumnConnect networking platform, continuing-education workshops, mosque & library access on campus.
-- Mentorship: alumni can register as mentors through AlumnConnect. Students can search the People tab by faculty to find mentors.
-- Upcoming events are posted on the feed; users can also check iuiu.ac.ug/events.
+=== ABOUT IUIU ===
+- Founded: 1988 in Mbale, Uganda by OIC.
+- Campuses: Main (Kibuli Hill, Kampala), Female (Mbale), Arua, Kabale.
+- Website: iuiu.ac.ug | Email: info@iuiu.ac.ug
 
-Respond in a friendly, helpful, concise way. Use **bold** for key terms. Keep answers under 200 words unless a detailed explanation is necessary. Always encourage users to connect with each other on AlumnConnect.`
+=== TRANSCRIPTS ===
+- Apply at the Registrar's office on your campus or email registrar@iuiu.ac.ug. Requires Student ID, application form, and payment receipt. Takes 5-10 working days.
 
+=== MENTORSHIP & BENEFITS ===
+- Use the 'People' tab to filter, find, and message mentors/students. 
+- Benefits include networking, career fairs, library access, and job boards.
+
+=== TONE & FORMAT ===
+- If the user greets with "Assalamu Alaikum", strictly open your reply with "Wa Alaykum Assalam".
+- Answer the user's question instantly without introductory phrases.`
+
+// aiMessage matches the shape the frontend sends: { role, content }
 type aiMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
@@ -238,75 +246,134 @@ type aiRequest struct {
 	Messages []aiMessage `json:"messages"`
 }
 
-type anthropicRequest struct {
-	Model     string      `json:"model"`
-	MaxTokens int         `json:"max_tokens"`
-	System    string      `json:"system"`
-	Messages  []aiMessage `json:"messages"`
+// ── Gemini REST API types ─────────────────────────────────────────────────────
+
+type geminiPart struct {
+	Text string `json:"text"`
 }
 
-type anthropicResponse struct {
-	Content []struct {
-		Type string `json:"type"`
-		Text string `json:"text"`
-	} `json:"content"`
+type geminiContent struct {
+	Role  string       `json:"role"`
+	Parts []geminiPart `json:"parts"`
+}
+
+type geminiSystemInstruction struct {
+	Parts []geminiPart `json:"parts"`
+}
+
+type geminiRequest struct {
+	SystemInstruction geminiSystemInstruction `json:"system_instruction"`
+	Contents          []geminiContent         `json:"contents"`
+	GenerationConfig  map[string]any          `json:"generationConfig"`
+}
+
+type geminiResponse struct {
+	Candidates []struct {
+		Content struct {
+			Parts []geminiPart `json:"parts"`
+		} `json:"content"`
+		FinishReason string `json:"finishReason"`
+	} `json:"candidates"`
 	Error *struct {
+		Code    int    `json:"code"`
 		Message string `json:"message"`
+		Status  string `json:"status"`
 	} `json:"error,omitempty"`
 }
 
 func ChatBot(c *echo.Context) error {
 	var req aiRequest
-	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil || len(req.Messages) == 0 {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request payload"})
 	}
 
+	if len(req.Messages) == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "No messages found"})
+	}
+
+	// Trim history to prevent blowing past token limits (Last 20 turns)
 	msgs := req.Messages
 	if len(msgs) > 20 {
 		msgs = msgs[len(msgs)-20:]
 	}
 
-	payload := anthropicRequest{
-		Model:     "claude-sonnet-4-20250514",
-		MaxTokens: 512,
-		System:    iuiuSystemPrompt,
-		Messages:  msgs,
+	var contents []geminiContent
+	for _, m := range msgs {
+		role := m.Role
+		if role == "assistant" {
+			role = "model"
+		}
+		if role != "user" && role != "model" {
+			continue
+		}
+		contents = append(contents, geminiContent{
+			Role:  role,
+			Parts: []geminiPart{{Text: m.Content}},
+		})
 	}
-	body, _ := json.Marshal(payload)
 
-	httpReq, _ := http.NewRequest("POST", "https://api.anthropic.com/v1/messages", bytes.NewReader(body))
+	if len(contents) == 0 || contents[0].Role != "user" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Conversation must start with a user message"})
+	}
+
+	payload := geminiRequest{
+		SystemInstruction: geminiSystemInstruction{
+			Parts: []geminiPart{{Text: iuiuSystemPrompt}},
+		},
+		Contents: contents,
+		GenerationConfig: map[string]any{
+			"maxOutputTokens": 1050, // Strictly limits response length window
+			"temperature":     0.3,  // Forces highly direct, objective word choices
+		},
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to encode body"})
+	}
+
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "AI API Key environment target missing"})
+	}
+
+	// FIX: Updated endpoint targeting the gemini-3.5-flash model
+	url := "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=" + apiKey
+
+	httpReq, err := http.NewRequest("POST", url, bytes.NewReader(body))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create request"})
+	}
 	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("x-api-key", os.Getenv("ANTHROPIC_API_KEY"))
-	httpReq.Header.Set("anthropic-version", "2023-06-01")
 
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(httpReq)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "AI service unavailable"})
+		return c.JSON(http.StatusServiceUnavailable, map[string]string{"error": "AI service unreachable"})
 	}
 	defer resp.Body.Close()
 
-	var ar anthropicResponse
-	if err := json.NewDecoder(resp.Body).Decode(&ar); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to parse AI response"})
+	var gr geminiResponse
+	if err := json.NewDecoder(resp.Body).Decode(&gr); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to decode response"})
 	}
-	if ar.Error != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": ar.Error.Message})
+
+	if gr.Error != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": gr.Error.Message})
+	}
+	if len(gr.Candidates) == 0 || len(gr.Candidates[0].Content.Parts) == 0 {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "No response returned from the model"})
 	}
 
 	var reply strings.Builder
-	for _, block := range ar.Content {
-		if block.Type == "text" {
-			reply.WriteString(block.Text)
-		}
+	for _, part := range gr.Candidates[0].Content.Parts {
+		reply.WriteString(part.Text)
 	}
 
-	return c.JSON(200, map[string]string{"reply": reply.String()})
+	return c.JSON(http.StatusOK, map[string]string{"reply": reply.String()})
 }
 
 // ─── conversations ────────────────────────────────────────────────────────────
-
-// GetConversations returns the current user's conversation list with last message and unread count.
 func GetConversations(c *echo.Context) error {
 	uid := currentUserID(c)
 	if uid == 0 {
@@ -369,8 +436,6 @@ func GetConversations(c *echo.Context) error {
 }
 
 // ─── messages ─────────────────────────────────────────────────────────────────
-
-// GetMessages returns the full thread between the current user and :uid, marking incoming messages as read.
 func GetMessages(c *echo.Context) error {
 	me := currentUserID(c)
 	if me == 0 {
@@ -417,7 +482,6 @@ func GetMessages(c *echo.Context) error {
 	return c.JSON(200, msgs)
 }
 
-// SendMessage sends a message (with optional media) from the current user to :uid.
 func SendMessage(c *echo.Context) error {
 	me := currentUserID(c)
 	if me == 0 {
@@ -458,7 +522,6 @@ func SendMessage(c *echo.Context) error {
 	return c.JSON(201, map[string]bool{"ok": true})
 }
 
-// GetMessageMedia returns the media URL for a message — only accessible to the sender or receiver.
 func GetMessageMedia(c *echo.Context) error {
 	me := currentUserID(c)
 	if me == 0 {
@@ -489,7 +552,6 @@ func Logout(c *echo.Context) error {
 }
 
 // ─── /api/me ──────────────────────────────────────────────────────────────────
-// GetMe returns the currently logged-in user's profile.
 func GetMe(c *echo.Context) error {
 	uid := currentUserID(c)
 	if uid == 0 {

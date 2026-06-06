@@ -2,6 +2,7 @@ tmp/
 node_modules/
 node_modules
 .git
+.env
 tmp
 .air.toml
 users.db

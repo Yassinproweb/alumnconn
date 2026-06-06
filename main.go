@@ -8,6 +8,7 @@ import (
 
 	"github.com/Yassinproweb/alumnconn/db"
 	"github.com/Yassinproweb/alumnconn/handlers"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
@@ -15,7 +16,6 @@ import (
 //go:embed views/*
 var templateFS embed.FS
 
-// TemplateRenderer is a custom html/template renderer for Echo framework
 type TemplateRenderer struct {
 	templates *template.Template
 }
@@ -28,6 +28,7 @@ func (t *TemplateRenderer) Render(c *echo.Context, w io.Writer, name string, dat
 }
 
 func main() {
+	godotenv.Load()
 	db.ConnectDB()
 	e := echo.New()
 
