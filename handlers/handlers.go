@@ -614,7 +614,9 @@ func GetPosts(c *echo.Context) error {
 		)
 		THEN 1
 		ELSE 0
-		END as liked
+		END as liked,
+		
+		COUNT(DISTINCT cm.id) as comment_count
 		
 		FROM posts p
 		JOIN users u
@@ -622,6 +624,9 @@ func GetPosts(c *echo.Context) error {
 		
 		LEFT JOIN likes l
 		ON l.post_id=p.id
+		
+		LEFT JOIN comments cm
+		ON cm.post_id=p.id
 		
 		GROUP BY p.id
 		
@@ -648,6 +653,7 @@ func GetPosts(c *echo.Context) error {
 
 		var likes int
 		var liked int
+		var commentCount int
 
 		err = rows.Scan(
 			&id,
@@ -663,6 +669,7 @@ func GetPosts(c *echo.Context) error {
 			&avatarColor,
 			&likes,
 			&liked,
+			&commentCount,
 		)
 
 		if err != nil {
@@ -670,17 +677,18 @@ func GetPosts(c *echo.Context) error {
 		}
 
 		posts = append(posts, map[string]any{
-			"id":           id,
-			"user_id":      userID,
-			"name":         name,
-			"content":      content,
-			"created_at":   createdAt,
-			"role":         role,
-			"faculty":      faculty,
-			"user_avatar":  avatar,
-			"avatar_color": avatarColor.String,
-			"likes":        likes,
-			"liked":        liked == 1,
+			"id":            id,
+			"user_id":       userID,
+			"name":          name,
+			"content":       content,
+			"created_at":    createdAt,
+			"role":          role,
+			"faculty":       faculty,
+			"user_avatar":   avatar,
+			"avatar_color":  avatarColor.String,
+			"likes":         likes,
+			"liked":         liked == 1,
+			"comment_count": commentCount,
 
 			"media_name": mediaName.String,
 			"media_type": mediaType.String,
@@ -927,4 +935,228 @@ func GetUsers(c *echo.Context) error {
 	}
 
 	return c.JSON(200, users)
+}
+
+// ─── comments ─────────────────────────────────────────────────────────────────
+
+// GetComments returns all top-level comments for a post, each with:
+//   - author info (name, avatar, role)
+//   - thumbs-up and thumbs-down counts
+//   - whether the current user has voted (and which direction)
+//   - replies (one level deep), each with the same vote fields
+func GetComments(c *echo.Context) error {
+	uid := currentUserID(c)
+	postID := c.Param("id")
+
+	// ── top-level comments ────────────────────────────────────────
+	rows, err := db.DB.Query(`
+		SELECT
+			cm.id,
+			cm.user_id,
+			cm.content,
+			cm.created_at,
+			u.username,
+			u.role,
+			u.avatar,
+			u.avatar_color,
+			COALESCE(SUM(CASE WHEN cv.vote=1  THEN 1 ELSE 0 END), 0) AS thumbs_up,
+			COALESCE(SUM(CASE WHEN cv.vote=-1 THEN 1 ELSE 0 END), 0) AS thumbs_down,
+			COALESCE((SELECT vote FROM comment_votes WHERE user_id=? AND comment_id=cm.id), 0) AS my_vote
+		FROM comments cm
+		JOIN users u ON u.id = cm.user_id
+		LEFT JOIN comment_votes cv ON cv.comment_id = cm.id
+		WHERE cm.post_id=? AND cm.parent_id IS NULL
+		GROUP BY cm.id
+		ORDER BY cm.created_at ASC
+	`, uid, postID)
+	if err != nil {
+		return c.JSON(500, map[string]string{"error": err.Error()})
+	}
+	defer rows.Close()
+
+	// Build a map so we can attach replies efficiently
+	type comment struct {
+		ID          int       `json:"id"`
+		UserID      int       `json:"user_id"`
+		Content     string    `json:"content"`
+		CreatedAt   string    `json:"created_at"`
+		Name        string    `json:"name"`
+		Role        string    `json:"role"`
+		Avatar      string    `json:"avatar"`
+		AvatarColor string    `json:"avatar_color"`
+		ThumbsUp    int       `json:"thumbs_up"`
+		ThumbsDown  int       `json:"thumbs_down"`
+		MyVote      int       `json:"my_vote"` // 1=up, -1=down, 0=none
+		Replies     []comment `json:"replies"`
+	}
+
+	var topLevel []comment
+	idIndex := map[int]int{} // comment id → index in topLevel
+
+	for rows.Next() {
+		var cm comment
+		var avatar, avatarColor sql.NullString
+		if err := rows.Scan(
+			&cm.ID, &cm.UserID, &cm.Content, &cm.CreatedAt,
+			&cm.Name, &cm.Role, &avatar, &avatarColor,
+			&cm.ThumbsUp, &cm.ThumbsDown, &cm.MyVote,
+		); err != nil {
+			continue
+		}
+		cm.Avatar = avatar.String
+		cm.AvatarColor = avatarColor.String
+		cm.Replies = []comment{}
+		idIndex[cm.ID] = len(topLevel)
+		topLevel = append(topLevel, cm)
+	}
+
+	// ── replies (one level deep) ──────────────────────────────────
+	repRows, err := db.DB.Query(`
+		SELECT
+			cm.id,
+			cm.parent_id,
+			cm.user_id,
+			cm.content,
+			cm.created_at,
+			u.username,
+			u.role,
+			u.avatar,
+			u.avatar_color,
+			COALESCE(SUM(CASE WHEN cv.vote=1  THEN 1 ELSE 0 END), 0) AS thumbs_up,
+			COALESCE(SUM(CASE WHEN cv.vote=-1 THEN 1 ELSE 0 END), 0) AS thumbs_down,
+			COALESCE((SELECT vote FROM comment_votes WHERE user_id=? AND comment_id=cm.id), 0) AS my_vote
+		FROM comments cm
+		JOIN users u ON u.id = cm.user_id
+		LEFT JOIN comment_votes cv ON cv.comment_id = cm.id
+		WHERE cm.post_id=? AND cm.parent_id IS NOT NULL
+		GROUP BY cm.id
+		ORDER BY cm.created_at ASC
+	`, uid, postID)
+	if err != nil {
+		return c.JSON(500, map[string]string{"error": err.Error()})
+	}
+	defer repRows.Close()
+
+	for repRows.Next() {
+		var cm comment
+		var parentID int
+		var avatar, avatarColor sql.NullString
+		if err := repRows.Scan(
+			&cm.ID, &parentID, &cm.UserID, &cm.Content, &cm.CreatedAt,
+			&cm.Name, &cm.Role, &avatar, &avatarColor,
+			&cm.ThumbsUp, &cm.ThumbsDown, &cm.MyVote,
+		); err != nil {
+			continue
+		}
+		cm.Avatar = avatar.String
+		cm.AvatarColor = avatarColor.String
+		cm.Replies = []comment{}
+		if idx, ok := idIndex[parentID]; ok {
+			topLevel[idx].Replies = append(topLevel[idx].Replies, cm)
+		}
+	}
+
+	if topLevel == nil {
+		topLevel = []comment{}
+	}
+	return c.JSON(200, topLevel)
+}
+
+// AddComment creates a new comment on a post.
+// Body: { "content": "...", "parent_id": 0 }  (parent_id=0 → top-level)
+func AddComment(c *echo.Context) error {
+	uid := currentUserID(c)
+	if uid == 0 {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login required"})
+	}
+	postID := c.Param("id")
+
+	var body struct {
+		Content  string `json:"content"`
+		ParentID *int   `json:"parent_id"` // nil or omitted → top-level
+	}
+	if err := json.NewDecoder(c.Request().Body).Decode(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid body"})
+	}
+	if strings.TrimSpace(body.Content) == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "comment cannot be empty"})
+	}
+
+	var result sql.Result
+	var err error
+	if body.ParentID != nil && *body.ParentID > 0 {
+		result, err = db.DB.Exec(`
+			INSERT INTO comments (post_id, user_id, parent_id, content)
+			VALUES (?, ?, ?, ?)
+		`, postID, uid, *body.ParentID, strings.TrimSpace(body.Content))
+	} else {
+		result, err = db.DB.Exec(`
+			INSERT INTO comments (post_id, user_id, content)
+			VALUES (?, ?, ?)
+		`, postID, uid, strings.TrimSpace(body.Content))
+	}
+	if err != nil {
+		return c.JSON(500, map[string]string{"error": err.Error()})
+	}
+
+	newID, _ := result.LastInsertId()
+	return c.JSON(201, map[string]any{"ok": true, "id": newID})
+}
+
+// VoteComment handles thumbs-up (vote=1) and thumbs-down (vote=-1) on a comment.
+// Calling the same vote twice toggles it off (removes the vote).
+// Route param :vote must be "up" or "down".
+func VoteComment(c *echo.Context) error {
+	uid := currentUserID(c)
+	if uid == 0 {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login required"})
+	}
+	commentID := c.Param("id")
+	direction := c.Param("vote") // "up" or "down"
+
+	voteVal := 0
+	switch direction {
+	case "up":
+		voteVal = 1
+	case "down":
+		voteVal = -1
+	default:
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "vote must be 'up' or 'down'"})
+	}
+
+	// Check existing vote
+	var existing int
+	err := db.DB.QueryRow(`
+		SELECT COALESCE(vote, 0) FROM comment_votes
+		WHERE user_id=? AND comment_id=?
+	`, uid, commentID).Scan(&existing)
+
+	if err != nil && err != sql.ErrNoRows {
+		return c.JSON(500, map[string]string{"error": err.Error()})
+	}
+
+	if existing == voteVal {
+		// Same vote again → remove it (toggle off)
+		db.DB.Exec(`DELETE FROM comment_votes WHERE user_id=? AND comment_id=?`, uid, commentID)
+		voteVal = 0
+	} else if existing != 0 {
+		// Switching from up→down or down→up
+		db.DB.Exec(`UPDATE comment_votes SET vote=? WHERE user_id=? AND comment_id=?`, voteVal, uid, commentID)
+	} else {
+		// New vote
+		db.DB.Exec(`INSERT INTO comment_votes (user_id, comment_id, vote) VALUES (?,?,?)`, uid, commentID, voteVal)
+	}
+
+	// Return updated counts
+	var up, down int
+	db.DB.QueryRow(`SELECT
+		COALESCE(SUM(CASE WHEN vote=1  THEN 1 ELSE 0 END), 0),
+		COALESCE(SUM(CASE WHEN vote=-1 THEN 1 ELSE 0 END), 0)
+		FROM comment_votes WHERE comment_id=?`, commentID).Scan(&up, &down)
+
+	return c.JSON(200, map[string]any{
+		"my_vote":     voteVal,
+		"thumbs_up":   up,
+		"thumbs_down": down,
+	})
 }

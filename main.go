@@ -78,10 +78,16 @@ func main() {
 	api.POST("/me/avatar", handlers.UploadAvatar)
 	api.POST("/chat", handlers.ChatBot)
 
+	// Posts
 	api.GET("/conversations", handlers.GetConversations)
 	api.GET("/messages/:uid", handlers.GetMessages)
 	api.POST("/messages/:uid", handlers.SendMessage)
 	api.GET("/messages/:uid/media/:mid", handlers.GetMessageMedia)
+
+	// Posts
+	api.GET("/posts/:id/comments", handlers.GetComments)
+	api.POST("/posts/:id/comments", handlers.AddComment)
+	api.POST("/comments/:id/vote/:vote", handlers.VoteComment)
 
 	// Users
 	api.GET("/users", handlers.GetUsers)

@@ -81,6 +81,23 @@ func createTables() {
 	    is_read    INTEGER NOT NULL DEFAULT 0,
 	    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);
+
+		CREATE TABLE IF NOT EXISTS comments (
+ 	    id INTEGER PRIMARY KEY AUTOINCREMENT,
+ 	    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      parent_id INTEGER REFERENCES comments(id) ON DELETE CASCADE, -- NULL = top-level
+  	  content TEXT NOT NULL,
+   	  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS comment_votes (
+   	  id INTEGER PRIMARY KEY AUTOINCREMENT,
+    	user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ 	    comment_id INTEGER NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+  	  vote INTEGER NOT NULL CHECK(vote IN (1, -1)), -- 1=thumbs up, -1=thumbs down
+   		UNIQUE(user_id, comment_id)
+		);
 	`
 
 	_, err := DB.Exec(query)
