@@ -7,4 +7,4 @@ tmp
 users.db
 users.db-shm
 users.db-wal
-static/uploads/
+static/uploads

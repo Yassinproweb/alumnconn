@@ -50,6 +50,8 @@ func createTables() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER,
       content TEXT,
+      media_name TEXT,
+      media_type TEXT,
       image TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
@@ -68,6 +70,17 @@ func createTables() {
       FOREIGN KEY(user_id) REFERENCES users(id),
       FOREIGN KEY(post_id) REFERENCES posts(id)
     );
+
+		CREATE TABLE IF NOT EXISTS messages (
+	    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+	    sender_id  INTEGER NOT NULL,
+	    receiver_id INTEGER NOT NULL,
+	    content    TEXT NOT NULL DEFAULT '',
+	    media_name TEXT,
+	    media_type TEXT,
+	    is_read    INTEGER NOT NULL DEFAULT 0,
+	    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);
 	`
 
 	_, err := DB.Exec(query)

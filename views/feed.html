@@ -252,12 +252,7 @@
       <!-- AI button -->
       <button onclick="showPanel('ai')" title="AI Assistant"
         class="w-9 h-9 rounded-full border-none bg-[#181b18] cursor-pointer flex items-center justify-center text-[#6b7280] transition-all duration-150 hover:bg-[#272a27] hover:text-[#fafafa]">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3" />
-          <path
-            d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-        </svg>
+        <i class="hgi hgi-stroke hgi-rounded hgi-ai-chat-01 text-xl"></i>
       </button>
       <!-- Avatar -->
       <div id="top-av" onclick="showPanel('profile')" title="Profile"
@@ -278,7 +273,6 @@
 
   <!-- ── MAIN CONTENT ── -->
   <div class="pt-[72px] pb-[80px] max-w-[680px] mx-auto px-4 sm:px-6">
-
     <!-- ══ FEED PANEL ══ -->
     <div class="panel active" id="panel-feed">
       <!-- Compose card -->
@@ -514,21 +508,18 @@
             <img id="prof-av-img" src="" alt="" class="hidden w-full h-full object-cover">
             <span id="prof-av-initials"></span>
             <div
-              class="absolute bottom-0 right-0 w-[22px] h-[22px] bg-[#006633] rounded-full flex items-center justify-center border-2 border-[#090b09]">
+              class="absolute bottom-0 right-0 w-[22px] h-[22px] bg-[#006633] rounded-full flex items-center justify-center border-2 border-[#090b09] z-50">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
             </div>
           </div>
-          <button
-            class="bg-transparent border border-[#3f463f] text-[#fafafa] px-4 py-[7px] rounded-[20px] text-[13px] font-semibold cursor-pointer hover:border-[#006633] hover:text-[#006633] transition-all font-['DM_Sans',sans-serif]">Edit
-            profile</button>
         </div>
         <!-- Profile info -->
         <div class="px-4 pb-4">
-          <div id="prof-name" class="text-[18px] font-bold"></div>
-          <div id="prof-handle" class="text-[#6b7280] text-[13px] mt-0.5"></div>
+          <div id="prof-name" class="text-[18px] font-bold capitalize"></div>
+          <div id="prof-handle" class="text-[#6b7280] text-[13px] mt-0.5 capitalize"></div>
           <div id="prof-bio" class="text-[#e4e4e7] text-[14px] mt-2 leading-relaxed"></div>
           <!-- Stats -->
           <div class="flex gap-5 mt-3">
@@ -542,15 +533,15 @@
             <div class="text-[11px] font-bold text-[#6b7280] uppercase tracking-widest mb-3">Account info</div>
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2 text-[13px]">
-                <span class="text-[#6b7280]">✉️</span>
+                <span class="text-[#6b7280]"><i class="hgi hgi-stroke hgi-rounded hgi-mail-open text-2xl"></i> </span>
                 <span id="info-email" class="text-[#e4e4e7]"></span>
               </div>
               <div class="flex items-center gap-2 text-[13px]">
-                <span class="text-[#6b7280]">🏛️</span>
+                <span class="text-[#6b7280]"><i class="hgi hgi-stroke hgi-rounded hgi-university text-2xl"></i> </span>
                 <span id="info-faculty" class="text-[#e4e4e7]"></span>
               </div>
               <div class="flex items-center gap-2 text-[13px]">
-                <span class="text-[#6b7280]">📅</span>
+                <span class="text-[#6b7280]"><i class="hgi hgi-stroke hgi-rounded hgi-calendar-01 text-2xl"></i> </span>
                 <span id="info-year" class="text-[#e4e4e7]"></span>
               </div>
             </div>
@@ -578,14 +569,14 @@
       </button>
       <button id="bnav-messages" onclick="showPanel('messages')"
         class="bnav flex-1 flex flex-col items-center gap-1 py-1.5 border-none bg-transparent cursor-pointer rounded-xl relative transition-all text-[#3d4852]">
-        <i class="hgi hgi-stroke hgi-bubble-chat-edit" style="font-size:1.5rem;"></i>
+        <i class="hgi hgi-stroke hgi-chat" style="font-size:1.5rem;"></i>
         <span class="text-[10px] font-medium">Messages</span>
         <div id="msg-badge"
           class="hidden absolute top-1 right-[calc(50%-14px)] w-[7px] h-[7px] bg-[#8C1515] rounded-full"></div>
       </button>
       <button id="bnav-ai" onclick="showPanel('ai')"
         class="bnav flex-1 flex flex-col items-center gap-1 py-1.5 border-none bg-transparent cursor-pointer rounded-xl relative transition-all text-[#3d4852]">
-        <i class="hgi hgi-stroke hgi-ai-chat-02" style="font-size:1.5rem;"></i>
+        <i class="hgi hgi-stroke hgi-ai-chat-01" style="font-size:1.5rem;"></i>
         <span class="text-[10px] font-medium">AI Chat</span>
       </button>
       <button id="bnav-profile" onclick="showPanel('profile')"
@@ -630,15 +621,22 @@
         document.getElementById('info-year').textContent = ME.entry_year ? 'Entry ' + ME.entry_year : '—';
       }
 
-      fetch('/api/avatar/' + ME.id).then(r => r.json()).then(d => {if (d.avatar) setAvImg(d.avatar);}).catch(() => { });
+      if (ME.avatar) {
+        setAvImg(ME.avatar);
+      }
 
       loadPosts(); loadPeople(); loadConversations(); aiGreet();
-      setInterval(loadConversations, 8000);
+      setInterval(loadConversations, 3000);
     }
 
     /* ── UTILS ────────────────────────────────────────────────── */
     function initials(n) {const p = n.trim().split(' '); return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();}
     function esc(s) {return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');}
+    // Returns inner HTML for an avatar circle — photo if available, else coloured initials.
+    function avatarHtml(name, avatarUrl, color) {
+      if (avatarUrl) return `<img src="${esc(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="${esc(name)}">`;
+      return initials(name);
+    }
     function timeAgo(dt) {
       const d = new Date(dt.includes('Z') || dt.includes('+') ? dt : dt + 'Z');
       const s = Math.floor((Date.now() - d) / 1000);
@@ -649,6 +647,7 @@
       const img = document.getElementById('prof-av-img'), ini = document.getElementById('prof-av-initials');
       img.src = src; img.classList.remove('hidden'); ini.style.display = 'none';
       document.getElementById('top-av').innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      document.getElementById('compose-av').innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
     }
 
     /* ── PANEL SWITCHING ──────────────────────────────────────── */
@@ -719,20 +718,33 @@
         const roleClass = p.role === 'alumni' ? 'alumni' : p.role === 'staff' ? 'staff' : 'student';
         let mediaHtml = '';
         if (p.media_type && p.media_name) {
-          if (p.media_type.startsWith('image/') || p.media_type.startsWith('video/')) {
-            mediaHtml = `<div class="mb-3"><img src="" data-post-id="${p.id}" class="post-media lazy-media" alt="media" loading="lazy"></div>`;
+          if (p.media_type.startsWith('image/')) {
+            mediaHtml = `
+              <div class="mb-3">
+                <img src="${p.media_name}" class="w-full rounded-xl aspect-[4/3] max-h-[450px] object-cover">
+              </div>`;
+          } else if (p.media_type.startsWith('video/')) {
+            mediaHtml = `
+              <div class="mb-3">
+                <video controls class="w-full rounded-xl max-h-[450px] aspect-video">
+                  <source src="${p.media_name}" type="${p.media_type}">
+                </video>
+              </div>`;
           } else {
-            mediaHtml = `<div class="flex items-center gap-2 bg-[#272a27] rounded-xl px-3 py-2.5 mb-3">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[#e4e4e7]">${esc(p.media_name)}</span>
-              <button class="bg-[#006633] border-none text-white px-2 py-1 rounded-md text-xs cursor-pointer" onclick="downloadMedia(${p.id},'post')">↓</button>
-            </div>`;
+            mediaHtml = `
+              <div class="flex items-center gap-2 bg-[#272a27] rounded-xl px-3 py-2.5 mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[#e4e4e7]">${esc(p.media_name)}</span>
+                <button class="bg-[#006633] border-none text-white px-2 py-1 rounded-md text-xs cursor-pointer" onclick="downloadMedia(${p.id},'post')">↓</button>
+              </div>`;
           }
         }
         return `<div class="bg-[#181b18] border border-[#272a27] rounded-2xl overflow-hidden mb-3 fi" id="post-${p.id}">
           <div class="p-3.5">
             <div class="flex gap-2.5 items-center mb-2.5">
-              <div class="w-[38px] h-[38px] rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0" style="background:${p.avatar_color || '#6366f1'}">${initials(p.name)}</div>
+              <div class="size-[38px] rounded-full overflow-hidden shrink-0 flex items-center justify-center font-bold text-white" style="background:${p.avatar_color || '#6366f1'}">
+                ${p.user_avatar ? `<img src="${p.user_avatar}" class="w-full h-full object-cover rounded-full" alt="${esc(p.name)}">` : initials(p.name)}
+              </div>
               <div class="flex-1">
                 <div class="font-semibold text-[14px] leading-tight">${esc(p.name)}<span class="role-pill ${roleClass}">${p.role || 'member'}</span></div>
                 <div class="text-[#6b7280] text-xs mt-px">${esc(p.faculty || 'IUIU')}</div>
@@ -747,7 +759,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="${p.liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 <span id="lc-${p.id}">${p.likes}</span>
               </button>
-              ${p.user_id !== ME.id ? `<button onclick="openConvo(${p.user_id},'${esc(p.name)}','${p.avatar_color || '#6366f1'}')"
+              ${p.user_id !== ME.id ? `<button onclick="openConvo(${p.user_id},'${esc(p.name)}','${p.avatar_color || '#6366f1'}','${esc(p.user_avatar || '')}')"
                 class="flex items-center gap-1.5 text-xs font-semibold text-[#6b7280] hover:text-[#006633] transition-all">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 Message
@@ -789,13 +801,13 @@
       el.innerHTML = users.map(u => {
         const roleClass = u.role === 'alumni' ? 'alumni' : u.role === 'staff' ? 'staff' : 'student';
         return `<div class="flex items-center gap-3 px-4 py-3 border-b border-[#272a27] last:border-b-0 fi">
-          <div class="w-11 h-11 rounded-full flex items-center justify-center text-[13px] font-bold text-white shrink-0" style="background:${u.avatar_color || '#6366f1'}">${initials(u.name)}</div>
+          <div class="w-11 h-11 rounded-full overflow-hidden flex items-center justify-center text-[13px] font-bold text-white shrink-0" style="background:${u.avatar_color || '#6366f1'}">${avatarHtml(u.name, u.avatar, u.avatar_color)}</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-semibold">${esc(u.name)}<span class="role-pill ${roleClass}">${u.role || 'member'}</span></div>
             <div class="text-xs text-[#6b7280] mt-px truncate">${esc(u.faculty || 'IUIU')}${u.entry_year ? ' · Entry ' + u.entry_year : ''}</div>
             ${u.bio ? `<div class="text-xs text-[#6b7280] mt-1 line-clamp-1">${esc(u.bio)}</div>` : ''}
           </div>
-          <button onclick="openConvo(${u.id},'${esc(u.name)}','${u.avatar_color || '#6366f1'}')"
+          <button onclick="openConvo(${u.id},'${esc(u.name)}','${u.avatar_color || '#6366f1'}','${esc(u.avatar || '')}')"
             class="w-9 h-9 rounded-full bg-[#272a27] border-none cursor-pointer flex items-center justify-center text-[#6b7280] hover:bg-[#006633] hover:text-white transition-all shrink-0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </button>
@@ -819,9 +831,9 @@
         return;
       }
       el.innerHTML = convos.map(c => `
-        <div onclick="openConvo(${c.id},'${esc(c.name)}','${c.avatar_color || '#6366f1'}')"
+        <div onclick="openConvo(${c.id},'${esc(c.name)}','${c.avatar_color || '#6366f1'}','${esc(c.avatar || '')}')"
           class="flex items-center gap-3 px-4 py-3 border-b border-[#272a27] last:border-b-0 cursor-pointer hover:bg-[#272a27] transition-all ${activeConvo === c.id ? 'bg-[rgba(0,102,51,.15)]' : ''}">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style="background:${c.avatar_color || '#6366f1'}">${initials(c.name)}</div>
+          <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-xs font-bold text-white shrink-0" style="background:${c.avatar_color || '#6366f1'}">${avatarHtml(c.name, c.avatar, c.avatar_color)}</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-semibold">${esc(c.name)}</div>
             <div class="text-xs text-[#6b7280] mt-px truncate">${esc(c.last_message || '')}</div>
@@ -833,13 +845,15 @@
         </div>`).join('');
     }
 
-    async function openConvo(userId, name, color) {
+    async function openConvo(userId, name, color, avatar) {
       activeConvo = userId; clearInterval(msgPollTimer);
       showPanel('messages');
       document.getElementById('convo-view').style.display = 'none';
       const cv = document.getElementById('chat-view'); cv.classList.add('open');
       const hdrAv = document.getElementById('chat-hdr-av');
-      hdrAv.style.background = color; hdrAv.textContent = initials(name);
+      hdrAv.style.background = color;
+      hdrAv.style.overflow = 'hidden';
+      hdrAv.innerHTML = avatarHtml(name, avatar, color);
       document.getElementById('chat-hdr-name').textContent = name;
       await fetchMsgs(userId);
       msgPollTimer = setInterval(() => fetchMsgs(userId), 4000);
@@ -946,11 +960,23 @@
 
     /* ── AVATAR UPLOAD ────────────────────────────────────────── */
     async function uploadAvatar(inp) {
-      const file = inp.files[0]; if (!file) return;
-      const fd = new FormData(); fd.append('file', file);
-      const r = await fetch('/api/me/avatar', {method: 'POST', body: fd});
+      const file = inp.files[0];
+      if (!file) return;
+
+      const fd = new FormData();
+      fd.append("avatar", file);
+
+      const r = await fetch('/api/me/avatar', {
+        method: 'POST',
+        body: fd
+      });
+
       const d = await r.json();
-      if (d.ok) setAvImg(d.avatar);
+
+      if (d.ok) {
+        ME.avatar = d.avatar;
+        setAvImg(d.avatar);
+      }
     }
 
     init();

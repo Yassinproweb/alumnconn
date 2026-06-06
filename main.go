@@ -77,10 +77,15 @@ func main() {
 	api.POST("/me/avatar", handlers.UploadAvatar)
 	api.POST("/chat", handlers.ChatBot)
 
+	api.GET("/conversations", handlers.GetConversations)
+	api.GET("/messages/:uid", handlers.GetMessages)
+	api.POST("/messages/:uid", handlers.SendMessage)
+	api.GET("/messages/:uid/media/:mid", handlers.GetMessageMedia)
+
 	// Users
 	api.GET("/users", handlers.GetUsers)
 
-	if err := e.Start("0.0.0.0:8000"); err != nil {
+	if err := e.Start("0.0.0.0:7000"); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}
 }
