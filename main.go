@@ -91,7 +91,7 @@ func main() {
 	// Users
 	api.GET("/users", handlers.GetUsers)
 
-	if err := e.Start("0.0.0.0:8000"); err != nil {
+	if err := e.Start("0.0.0.0:7000"); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}
 }

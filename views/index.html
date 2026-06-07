@@ -19,16 +19,16 @@
 </head>
 
 <body>
-  <header class="sticky top-0 left-0 border-b-2 border-b-green shadow-xl bg-white z-[999]">
+  <header class="fixed top-0 left-0 p-0 border-b-2 border-b-green shadow-xl bg-white z-[999]">
     <!-- ANNOUNCEMENT BAR -->
-    <div class="top-bar">
+    <div id="top-bar" class="top-bar">
       🎓 Registration for the <span>2025 IUIU Alumni Reunion</span> is now open — Mbale Campus, December 2025
       &nbsp;|&nbsp; <span>AlumnConnect</span> Chatbot now live 24/7
     </div>
 
     <!-- NAV -->
-    <nav class="flex items-center justify-between">
-      <div class="nav-inner">
+    <nav class="flex px-[5vw] py-3 items-center justify-between">
+      <div class="nav-inner p-0">
         <a href="#" class="nav-logo">
           <div class="logo-emblem">
             <i class="hgi hgi-stroke hgi-graduate-male text-3xl text-white"></i>
@@ -39,6 +39,25 @@
           </div>
         </a>
       </div>
+
+      <div class="divs items-center justify-end font-bold">
+        <button id="open" class="text-3xl text-g text-center">
+          <i class="hgi hgi-stroke hgi-menu-11"></i>
+        </button>
+        <button id="close" class="text-3xl text-g text-center hidden">
+          <i class="hgi hgi-stroke hgi-cancel-01"></i>
+        </button>
+      </div>
+
+      <div id="navbar"
+        class="absolute right-[5vw] top-[107%] w-fit flex flex-col items-center justify-center gap-0 px-7 py-5 rounded-2xl bg-white translate-x-72 lg:relative lg:flex-row lg:gap-3 lg:top-0 lg:right-0 lg:border-none lg:rounded-none lg:shadow-none">
+        <a href="#" class="">Home</a>
+        <a href="#about">About</a>
+        <a href="#mentorship">Mentorship</a>
+        <a href="#events">Events</a>
+        <a href="#stories">Stories</a>
+        <a href="#news">News</a>
+      </div>
     </nav> <!-- former nav -->
   </header> <!-- former nav -->
 
@@ -48,7 +67,7 @@
     <div class="hero-pattern"></div>
     <div class="hero-arc"></div>
 
-    <div class="hero-content container">
+    <div class="hero-content container pt-[35vh]">
       <div class="hero-left">
         <div class="hero-badge">IUIU Official Alumni Portal</div>
         <h1 class="hero-title">
@@ -690,7 +709,8 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 Islamic University in Uganda — Alumni Relations Office. All rights reserved.</p>
+        <p>&copy;<span id="date"></span> Islamic University in Uganda — Alumni Relations Office. All rights reserved.
+        </p>
         <p>Built with ❤️ by <a href="#">IUIU Computer Science Dept.</a> · AlumnConnect Project</p>
       </div>
     </div>
@@ -698,6 +718,20 @@
   </footer>
 
   <script>
+    const openM = document.getElementById("open"),
+      closeM = document.getElementById("close"),
+      divs = document.querySelector(".divs"),
+      nav = document.getElementById("navbar");
+
+    divs.addEventListener("click", () => {
+      openM.classList.toggle("hidden");
+      closeM.classList.toggle("hidden");
+      nav.classList.toggle("translate-x-72");
+    });
+
+    // date in copyright
+    document.getElementById("date").textContent = new Date().getFullYear();
+
     // ── SCROLL REVEAL ──
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {

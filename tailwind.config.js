@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        lg: '871px',
+      },
       colors: {
         green: '#006633',
         green_dark: '#004d26',
