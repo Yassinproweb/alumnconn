@@ -57,8 +57,8 @@ func main() {
 
 	// ── Auth pages ──
 	e.GET("/login", handlers.RegisterForm)
-	e.POST("/login?mode=register", handlers.RegisterUser)
-	e.POST("/login?mode=login", handlers.LoginUser)
+	e.POST("/register", handlers.RegisterUser)
+	e.POST("/login", handlers.LoginUser)
 	e.GET("/logout", handlers.Logout)
 
 	// ── Feed (requires session) ──
