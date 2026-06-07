@@ -657,7 +657,7 @@
       }
 
       loadPosts(); loadPeople(); loadConversations(); aiGreet();
-      setInterval(loadConversations, 3000);
+      setInterval(loadConversations, 30000);
     }
 
     /* ── UTILS ────────────────────────────────────────────────── */
@@ -1082,7 +1082,7 @@
       const replyForm = !isReply
         ? `<div id="reply-form-${c.id}" class="hidden mt-2 flex items-start gap-2">
             <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0 overflow-hidden" style="background:${ME ? (ME.avatar_color || '#006633') : '#006633'}">
-              ${ME && ME.avatar ? `<img src="${ME.avatar}" class="size-8 object-cover rounded-full">` : (ME ? initials(ME.name) : '')}
+              ${ME && ME.avatar ? `<img src="${ME.avatar}" class="size-6 object-cover rounded-full">` : (ME ? initials(ME.name) : '')}
             </div>
             <div class="flex-1 bg-[#272a27] rounded-xl px-3 py-1.5 flex items-end gap-2">
               <textarea id="reply-ta-${c.id}" placeholder="Reply…" rows="1"
@@ -1100,7 +1100,7 @@
       return `<div class="fi" id="cmt-${c.id}">
         <div class="flex gap-2 items-start">
           <div class="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-[10px] font-bold text-white shrink-0" style="background:${c.avatar_color || '#6366f1'}">
-            ${c.avatar ? `<img src="${esc(c.avatar)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initials(c.name)}
+            ${c.avatar ? `<img src="${c.avatar}" class="size-6 object-cover rounded-full">` : initials(c.name)}
           </div>
           <div class="flex-1 min-w-0">
             <div class="bg-[#272a27] rounded-xl rounded-tl-[4px] px-3 py-2">

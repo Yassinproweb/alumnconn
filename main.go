@@ -56,10 +56,9 @@ func main() {
 	e.GET("/health", handlers.Health)
 
 	// ── Auth pages ──
-	e.GET("/login", handlers.LoginForm)
-	e.GET("/register", handlers.RegisterForm)
-	e.POST("/register", handlers.RegisterUser)
-	e.POST("/login", handlers.LoginUser)
+	e.GET("/login", handlers.RegisterForm)
+	e.POST("/login?mode=register", handlers.RegisterUser)
+	e.POST("/login?mode=login", handlers.LoginUser)
 	e.GET("/logout", handlers.Logout)
 
 	// ── Feed (requires session) ──
@@ -92,7 +91,7 @@ func main() {
 	// Users
 	api.GET("/users", handlers.GetUsers)
 
-	if err := e.Start("0.0.0.0:7000"); err != nil {
+	if err := e.Start("0.0.0.0:8000"); err != nil {
 		e.Logger.Error("failed to start server", "error", err)
 	}
 }

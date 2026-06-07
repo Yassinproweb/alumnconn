@@ -58,17 +58,8 @@ var faculties = []string{
 	"Education", "Law", "Medicine", "Arts",
 }
 
-func LoginForm(c *echo.Context) error {
-	return c.Render(200, "auth.html", map[string]any{
-		"Mode":      "login",
-		"Email":     "",
-		"Faculties": faculties,
-	})
-}
-
 func RegisterForm(c *echo.Context) error {
 	return c.Render(200, "auth.html", map[string]any{
-		"Mode":      "register",
 		"Faculties": faculties,
 	})
 }

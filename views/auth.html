@@ -51,7 +51,7 @@
     <div class="text-center mb-7">
       <div
         class="size-14 rounded-[18px] bg-gradient-to-br from-[#006633] to-[#004d2c] flex items-center justify-center mx-auto mb-3.5 text-[26px]">
-        <i class="hgi hgi-stroke hgi-graduate-male text-5xl text-green_pale"></i>
+        <i class="hgi hgi-stroke hgi-graduate-male text-5xl text-white"></i>
       </div>
       <h1 class="text-white text-[22px] font-bold tracking-tight font-serif">AlumnConnect</h1>
       <p class="text-green_pale text-base mt-1">Islamic University in Uganda</p>
@@ -177,15 +177,21 @@
       document.getElementById('lf').style.display = t === 'login' ? 'block' : 'none';
       document.getElementById('sf').style.display = t === 'register' ? 'block' : 'none';
 
-      const activeClasses = ['bg-[#006633]', 'text-white'];
-      const inactiveClasses = ['bg-transparent', 'text-green_pale', 'hover:text-green_mid'];
+      const loginTab = document.getElementById('tab-login');
+      const registerTab = document.getElementById('tab-register');
 
-      document.querySelectorAll('#tab-login, #tab-register').forEach((btn, i) => {
+      [loginTab, registerTab].forEach((btn, i) => {
         const isActive = (t === 'login' && i === 0) || (t === 'register' && i === 1);
-        btn.classList.toggle('bg-\\[\\#006633\\]', isActive);
+        btn.classList.toggle('bg-[#006633]', isActive);
         btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('bg-transparent', !isActive);
         btn.classList.toggle('text-green_pale', !isActive);
       });
+
+      // Keep URL in sync
+      const url = new URL(window.location);
+      url.searchParams.set('mode', t);
+      window.history.replaceState({}, '', url);
 
       showErr('');
     }
@@ -199,12 +205,19 @@
     function handleResponse(evt, mode) {
       const xhr = evt.detail.xhr;
       if (xhr.status >= 200 && xhr.status < 300) {
-        // On success — redirect to feed
         window.location.href = '/feed';
       } else {
         showErr(xhr.responseText || 'Something went wrong. Please try again.');
       }
     }
+
+    // On page load: read ?mode param and switch to correct tab
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get('mode');
+      if (mode === 'register') sw('register');
+      else sw('login');
+    })();
   </script>
 
 </body>

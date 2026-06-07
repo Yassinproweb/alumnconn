@@ -1,0 +1,604 @@
+{{ define "dropdown" }}
+<style>
+  /* ── SERVICES MEGA MENU BAR ── */
+  .services-bar {
+    display: none;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 125px;
+    right: 25px;
+    z-index: 900;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .show-svc {
+    display: block;
+  }
+
+  .services-bar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  .svc-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 14px 22px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    position: relative;
+    transition: background 0.2s;
+    border-bottom: 3px solid transparent;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .svc-tab:hover {
+    background: var(--green-pale);
+    border-bottom-color: var(--green-mid);
+  }
+
+  .svc-tab.active {
+    background: var(--green-pale);
+    border-bottom-color: var(--green);
+  }
+
+  .svc-tab.active .svc-tab-icon {
+    background: var(--green);
+    transform: scale(1.1);
+  }
+
+  .svc-tab.active .svc-tab-label {
+    color: var(--green);
+  }
+
+  .svc-tab-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f0f0f0;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.25s;
+    flex-shrink: 0;
+  }
+
+  .svc-tab:hover .svc-tab-icon {
+    background: var(--green);
+    color: var(--white);
+    transform: scale(1.05);
+  }
+
+  .svc-tab-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--slate);
+    letter-spacing: 0.02em;
+    text-align: center;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .svc-tab:hover .svc-tab-label {
+    color: var(--green);
+  }
+
+  .svc-divider {
+    width: 1px;
+    background: var(--border);
+    margin: 10px 0;
+    flex-shrink: 0;
+  }
+
+  /* Dropdown panel */
+  .svc-panel-wrap {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 800;
+    background: var(--white);
+    border-bottom: 3px solid var(--green);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .svc-panel-wrap.open {
+    max-height: 275px;
+    opacity: 1;
+  }
+
+  .svc-panel {
+    display: none;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 36px 32px 40px;
+    gap: 40px;
+  }
+
+  .svc-panel.active {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .svc-panel-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .svc-panel-icon-big {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+
+  .svc-panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.2;
+  }
+
+  .svc-panel-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 260px;
+  }
+
+  .svc-panel-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 10px 22px;
+    background: var(--green);
+    color: var(--white);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    width: fit-content;
+  }
+
+  .svc-panel-cta:hover {
+    background: var(--green-dark);
+    transform: translateX(3px);
+  }
+
+  .svc-panel-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .svc-panel-links li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--slate);
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .svc-panel-links li a:hover {
+    background: var(--green-pale);
+    color: var(--green);
+    padding-left: 18px;
+  }
+
+  .svc-panel-links li a .link-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--ivory);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .svc-panel-links li a:hover .link-icon {
+    background: var(--green-mid);
+  }
+
+  .svc-panel-links li a .link-text {}
+
+  .svc-panel-links li a .link-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: inherit;
+    display: block;
+  }
+
+  .svc-panel-links li a .link-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: block;
+  }
+
+  .svc-panel-promo {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+    border-radius: 14px;
+    padding: 28px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .svc-panel-promo::before {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .svc-panel-promo .promo-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 4px 10px;
+    background: rgba(201, 168, 76, 0.25);
+    border: 1px solid rgba(201, 168, 76, 0.4);
+    border-radius: 100px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .svc-panel-promo .promo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+  }
+
+  .svc-panel-promo .promo-stat {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    font-family: 'Playfair Display', serif;
+    line-height: 1;
+  }
+
+  .svc-panel-promo .promo-stat small {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  .svc-panel-promo a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    text-decoration: none;
+  }
+
+  .svc-panel-promo a:hover {
+    color: var(--white);
+  }
+
+  @media (max-width: 768px) {
+    .services-bar {
+      top: 0;
+      overflow-x: auto;
+    }
+
+    .services-bar-inner {
+      min-width: 525px;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .svc-tab {
+      padding: 12px 14px;
+    }
+
+    .svc-tab-label {
+      font-size: 0.65rem;
+    }
+
+    .svc-panel-wrap.open {
+      max-height: 420px;
+    }
+
+    .svc-panel.active {
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+    }
+
+    .svc-panel-promo {
+      display: flex;
+    }
+  }
+</style>
+
+<div class="services-bar" id="services">
+  <div class="services-bar-inner">
+    <!-- Tab 1: Career -->
+    <button class="svc-tab active" data-panel="career" onclick="openPanel('career', this)">
+      <div class="svc-tab-icon"><i
+          class="hgi hgi-stroke hgi-rounded hgi-job-link text-2xl text-green_dark hover:text-white"></i></div>
+      <span class="svc-tab-label">Career Services</span>
+    </button>
+    <div class="svc-divider"></div>
+
+    <!-- Tab 2: Mentorship -->
+    <button class="svc-tab" data-panel="mentorship-tab" onclick="openPanel('mentorship-tab', this)">
+      <div class="svc-tab-icon"><i
+          class="hgi hgi-stroke hgi-rounded hgi-computer-video-call text-2xl text-green_dark hover:text-white"></i>
+      </div>
+      <span class="svc-tab-label">Mentorship</span>
+    </button>
+    <div class="svc-divider"></div>
+
+    <!-- Tab 3: Records -->
+    <button class="svc-tab" data-panel="records" onclick="openPanel('records', this)">
+      <div class="svc-tab-icon"><i
+          class="hgi hgi-stroke hgi-rounded hgi-file-zip text-2xl text-green_dark hover:text-white"></i></div>
+      <span class="svc-tab-label">Records &amp; Docs</span>
+    </button>
+    <div class="svc-divider"></div>
+
+    <!-- Tab 4: Events -->
+    <button class="svc-tab" data-panel="events-tab" onclick="openPanel('events-tab', this)">
+      <div class="svc-tab-icon"><i
+          class="hgi hgi-stroke hgi-rounded hgi-timeline-event text-2xl text-green_dark hover:text-white"></i></div>
+      <span class="svc-tab-label">Events</span>
+    </button>
+    <div class="svc-divider"></div>
+
+    <!-- Tab 5: News -->
+    <button class="svc-tab" data-panel="news-tab" onclick="openPanel('news-tab', this)">
+      <div class="svc-tab-icon"><i
+          class="hgi hgi-stroke hgi-rounded hgi-news-01 text-2xl text-green_dark hover:text-white"></i></div>
+      <span class="svc-tab-label">News</span>
+    </button>
+    <div class="svc-divider"></div>
+
+    <!-- Tab 6: AlumnBot -->
+    <button class="svc-tab" data-panel="alumnbot" onclick="openPanel('alumnbot', this)">
+      <div class="svc-tab-icon"><i
+          class="hgi hgi-stroke hgi-rounded hgi-ai-chat-01 text-2xl text-green_dark hover:text-white"></i></div>
+      <span class="svc-tab-label">AlumnBot AI</span>
+    </button>
+  </div>
+
+  <!-- DROPDOWN PANEL WRAPPER -->
+  <div class="svc-panel-wrap" id="svcPanelWrap">
+    <!-- CAREER PANEL -->
+    <div class="svc-panel active" id="panel-career">
+      <div class="svc-panel-left">
+        <div class="svc-panel-icon-big"><i class="hgi hgi-stroke hgi-rounded hgi-job-link text-5xl text-white"></i>
+        </div>
+        <div class="svc-panel-title">Career Services</div>
+        <div class="svc-panel-desc">Tailored career support for IUIU graduates — from first job to executive
+          leadership.
+        </div>
+      </div>
+      <ul class="svc-panel-links">
+        <li><a href="#"><span class="link-icon">💼</span><span class="link-text"><span class="link-label">Job
+                Board</span><span class="link-sub">Browse 120+ open positions for alumni</span></span></a></li>
+        <li><a href="#"><span class="link-icon">📝</span><span class="link-text"><span class="link-label">CV &
+                Resume
+                Clinic</span><span class="link-sub">Free review by career advisors</span></span></a></li>
+        <li><a href="#"><span class="link-icon">🏢</span><span class="link-text"><span class="link-label">Employer
+                Partners</span><span class="link-sub">Top companies recruiting IUIU graduates</span></span></a></li>
+        <li><a href="#"><span class="link-icon">📊</span><span class="link-text"><span class="link-label">Career
+                Counselling</span><span class="link-sub">Book a 1-on-1 session with an advisor</span></span></a>
+        </li>
+      </ul>
+      <div class="svc-panel-promo">
+        <span class="promo-badge">Now Hiring</span>
+        <div class="promo-title">New jobs added this week</div>
+        <div class="promo-stat">47 <small>open roles for graduates</small></div>
+        <a href="#">View all listings →</a>
+      </div>
+    </div>
+
+    <!-- MENTORSHIP PANEL -->
+    <div class="svc-panel" id="panel-mentorship-tab">
+      <div class="svc-panel-left">
+        <div class="svc-panel-icon-big"><i
+            class="hgi hgi-stroke hgi-rounded hgi-computer-video-call text-5xl text-white"></i></div>
+        <div class="svc-panel-title">Mentorship Programme</div>
+        <div class="svc-panel-desc">Connect with experienced alumni mentors or register to guide the next
+          generation.
+        </div>
+      </div>
+      <ul class="svc-panel-links">
+        <li><a href="#mentorship"><span class="link-icon">🔍</span><span class="link-text"><span
+                class="link-label">Search Mentors</span><span class="link-sub">Browse active alumni
+                mentors</span></span></a></li>
+        <li><a href="#"><span class="link-icon">✍️</span><span class="link-text"><span class="link-label">Become a
+                Mentor</span><span class="link-sub">Sign up and give back to students</span></span></a></li>
+        <li><a href="#"><span class="link-icon">🎓</span><span class="link-text"><span class="link-label">My
+                Mentorship</span><span class="link-sub">Track active connections and sessions</span></span></a></li>
+        <li><a href="#"><span class="link-icon">📖</span><span class="link-text"><span class="link-label">How It
+                Works</span><span class="link-sub">4-step programme guide</span></span></a></li>
+      </ul>
+      <div class="svc-panel-promo">
+        <span class="promo-badge">Active Now</span>
+        <div class="promo-title">Mentors ready to connect</div>
+        <div class="promo-stat">850+ <small>across 15 industries</small></div>
+        <a href="#mentorship">Explore mentors →</a>
+      </div>
+    </div>
+
+    <!-- RECORDS PANEL -->
+    <div class="svc-panel" id="panel-records">
+      <div class="svc-panel-left">
+        <div class="svc-panel-icon-big"><i class="hgi hgi-stroke hgi-rounded hgi-file-zip text-5xl text-white"></i>
+        </div>
+        <div class="svc-panel-title">Records & Documents</div>
+        <div class="svc-panel-desc">Official document requests processed securely online — no campus visit required.
+        </div>
+      </div>
+      <ul class="svc-panel-links">
+        <li><a href="#"><span class="link-icon">🗂️</span><span class="link-text"><span class="link-label">Request
+                Transcript</span><span class="link-sub">Official academic records (3–5 days)</span></span></a></li>
+        <li><a href="#"><span class="link-icon">🏅</span><span class="link-text"><span class="link-label">Certificate
+                Verification</span><span class="link-sub">Verify your IUIU degree online</span></span></a></li>
+        <li><a href="#"><span class="link-icon">🪪</span><span class="link-text"><span class="link-label">Alumni ID
+                Card</span><span class="link-sub">Request or replace your alumni card</span></span></a></li>
+        <li><a href="#"><span class="link-icon">✏️</span><span class="link-text"><span class="link-label">Update My
+                Profile</span><span class="link-sub">Keep your alumni record current</span></span></a></li>
+      </ul>
+      <div class="svc-panel-promo" style="background:linear-gradient(135deg,var(--red) 0%,#6b1111 100%);">
+        <span class="promo-badge"
+          style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.9);">Processing
+          Time</span>
+        <div class="promo-title">Transcripts ready in</div>
+        <div class="promo-stat">3–5 <small>business days · 100% secure</small></div>
+        <a href="#">Start request →</a>
+      </div>
+    </div>
+
+    <!-- EVENTS PANEL -->
+    <div class="svc-panel" id="panel-events-tab">
+      <div class="svc-panel-left">
+        <div class="svc-panel-icon-big"><i
+            class="hgi hgi-stroke hgi-rounded hgi-timeline-event text-5xl text-white"></i></div>
+        <div class="svc-panel-title">Events & Reunions</div>
+        <div class="svc-panel-desc">Stay engaged — from local networking nights to the iconic annual IUIU Reunion
+          Gala.
+        </div>
+      </div>
+      <ul class="svc-panel-links">
+        <li><a href="#events"><span class="link-icon">🎓</span><span class="link-text"><span class="link-label">Annual
+                Reunion 2025</span><span class="link-sub">Dec 14 · Mbale Campus · 342 registered</span></span></a>
+        </li>
+        <li><a href="#events"><span class="link-icon">💼</span><span class="link-text"><span class="link-label">Career
+                Fair</span><span class="link-sub">Nov 22 · Kampala Female Campus</span></span></a></li>
+        <li><a href="#events"><span class="link-icon">🌐</span><span class="link-text"><span class="link-label">AI &
+                Future of Work Webinar</span><span class="link-sub">Dec 5 · Online · Free entry</span></span></a>
+        </li>
+        <li><a href="#events"><span class="link-icon">📚</span><span class="link-text"><span class="link-label">Research
+                Symposium 2026</span><span class="link-sub">Jan 18 · Call for papers open</span></span></a></li>
+      </ul>
+      <div class="svc-panel-promo">
+        <span class="promo-badge">Next Event</span>
+        <div class="promo-title">Career Fair — Kampala</div>
+        <div class="promo-stat">18 <small>spots remaining · Nov 22</small></div>
+        <a href="#events">Register now →</a>
+      </div>
+    </div>
+
+    <!-- NEWS PANEL -->
+    <div class="svc-panel" id="panel-news-tab">
+      <div class="svc-panel-left">
+        <div class="svc-panel-icon-big"><i class="hgi hgi-stroke hgi-rounded hgi-news-01 text-5xl text-white"></i></div>
+        <div class="svc-panel-title">News & Updates</div>
+        <div class="svc-panel-desc">The latest from IUIU — institutional milestones, alumni achievements, and
+          research
+          spotlights.</div>
+      </div>
+      <ul class="svc-panel-links">
+        <li><a href="#news"><span class="link-icon">🏫</span><span class="link-text"><span class="link-label">New
+                Faculty of Engineering</span><span class="link-sub">Applications open for 2026
+                intake</span></span></a>
+        </li>
+        <li><a href="#news"><span class="link-icon">🏆</span><span class="link-text"><span class="link-label">Alumni
+                Innovation Award</span><span class="link-sub">Tariq Ssentamu wins EAT Prize 2025</span></span></a>
+        </li>
+        <li><a href="#news"><span class="link-icon">🌍</span><span class="link-text"><span
+                class="link-label">IUIU–Madinah Partnership</span><span class="link-sub">MoU signed for academic
+                exchange</span></span></a></li>
+        <li><a href="#stories"><span class="link-icon">⭐</span><span class="link-text"><span class="link-label">Alumni
+                Spotlights</span><span class="link-sub">Read inspiring graduate stories</span></span></a></li>
+      </ul>
+      <div class="svc-panel-promo" style="background:linear-gradient(135deg,#1a1a2e 0%,#2a2a4a 100%);">
+        <span class="promo-badge"
+          style="background:rgba(201,168,76,0.2);border-color:rgba(201,168,76,0.4);color:var(--gold-light);">Latest</span>
+        <div class="promo-title">IUIU Newsletter</div>
+        <div class="promo-stat" style="font-size:1.4rem;">Nov 2025 <small>edition now available</small></div>
+        <a href="#" style="color:var(--gold-light);">Read issue →</a>
+      </div>
+    </div>
+
+    <!-- ALUMNBOT PANEL -->
+    <div class="svc-panel" id="panel-alumnbot">
+      <div class="svc-panel-left">
+        <div class="svc-panel-icon-big" style="background:linear-gradient(135deg,var(--red),#6b1111);"><i
+            class="hgi hgi-stroke hgi-rounded hgi-ai-chat-01 text-5xl text-white"></i></div>
+        <div class="svc-panel-title">AlumnBot AI</div>
+        <div class="svc-panel-desc">Your intelligent 24/7 assistant — answers instantly, connects you to the right
+          resources.</div>
+        <a href="#chatbot" class="svc-panel-cta" style="background:var(--red);">Chat Now →</a>
+      </div>
+      <ul class="svc-panel-links">
+        <li><a href="#chatbot"><span class="link-icon">❓</span><span class="link-text"><span class="link-label">Ask
+                a
+                Question</span><span class="link-sub">Instant answers to common queries</span></span></a></li>
+        <li><a href="#chatbot"><span class="link-icon">🤖</span><span class="link-text"><span class="link-label">Mentor
+                Matching</span><span class="link-sub">Let AlumnBot find your ideal mentor</span></span></a></li>
+        <li><a href="#chatbot"><span class="link-icon">📋</span><span class="link-text"><span
+                class="link-label">Document Help</span><span class="link-sub">Guided assistance for record
+                requests</span></span></a></li>
+        <li><a href="#chatbot"><span class="link-icon">👤</span><span class="link-text"><span class="link-label">Talk to
+                a Human</span><span class="link-sub">Escalate to alumni office staff</span></span></a></li>
+      </ul>
+      <div class="svc-panel-promo" style="background:linear-gradient(135deg,var(--red) 0%,#3a0a0a 100%);">
+        <span class="promo-badge"
+          style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.85);">Always
+          On</span>
+        <div class="promo-title">Response time</div>
+        <div class="promo-stat">&lt;3s <small>average · 85%+ accuracy</small></div>
+        <a href="#chatbot">Start chatting →</a>
+      </div>
+    </div>
+
+  </div><!-- end svc-panel-wrap -->
+</div><!-- end services-bar -->
+{{ end }}
