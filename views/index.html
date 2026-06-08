@@ -19,16 +19,15 @@
 </head>
 
 <body>
-  <header class="fixed top-0 left-0 p-0 border-b-2 border-b-green shadow-xl bg-white z-[999]">
+  <header class="absolute top-0 left-0 p-0 border-b-2 border-b-green shadow-xl bg-white z-[999]">
     <!-- ANNOUNCEMENT BAR -->
     <div id="top-bar" class="top-bar">
-      <i class="hgi hgi-stroke hgi-students text-white text-xl"></i> Registration for the <span>2025 IUIU Alumni
-        Reunion</span> is now open — Mbale Campus, December 2025
+      Registration for the <span>2025 IUIU Alumni Reunion</span> is now open — Mbale Campus, December 2025
       &nbsp;|&nbsp; <span>AlumnConnect</span> Chatbot now live 24/7
     </div>
 
     <!-- NAV -->
-    <nav class="flex px-[5vw] py-3 items-center justify-between">
+    <nav class="flex px-[5vw] py-1.5 items-center justify-between top-0 left-0 w-full bg-white">
       <div class="nav-inner p-0">
         <a href="#" class="nav-logo">
           <div class="logo-emblem">
@@ -42,10 +41,10 @@
       </div>
 
       <div class="divs items-center justify-end font-bold">
-        <button id="open" class="text-3xl text-g text-center">
+        <button id="open" class="text-3xl text-green text-center">
           <i class="hgi hgi-stroke hgi-menu-11"></i>
         </button>
-        <button id="close" class="text-3xl text-g text-center hidden">
+        <button id="close" class="text-3xl text-green text-center hidden">
           <i class="hgi hgi-stroke hgi-cancel-01"></i>
         </button>
       </div>
@@ -68,8 +67,8 @@
     <div class="hero-pattern"></div>
     <div class="hero-arc"></div>
 
-    <div class="hero-content container pt-[35vh]">
-      <div class="hero-left">
+    <div class="hero-content container">
+      <div class="hero-left pt-[25vh] px-0 pb-8">
         <div class="hero-badge">IUIU Official Alumni Portal</div>
         <h1 class="hero-title">
           Where <em>Knowledge</em><br />Meets Community
@@ -164,23 +163,23 @@
           </p>
           <div class="about-pillars">
             <div class="pillar-card">
-              <div class="pillar-icon green"><i class="hgi hgi-stroke hgi-mosque-02 text-white text-2xl"></i></div>
+              <div class="pillar-icon green"><i class="hgi hgi-stroke hgi-mosque-02 text-green text-2xl"></i></div>
               <div class="pillar-title">Faith & Excellence</div>
               <div class="pillar-desc">Rooted in Islamic values, committed to academic and professional distinction.
               </div>
             </div>
             <div class="pillar-card">
-              <div class="pillar-icon red"><i class="hgi hgi-stroke hgi-globe text-white text-2xl"></i></div>
+              <div class="pillar-icon red"><i class="hgi hgi-stroke hgi-globe text-red text-2xl"></i></div>
               <div class="pillar-title">Global Reach</div>
               <div class="pillar-desc">Alumni spread across 40+ countries, creating a truly international network.</div>
             </div>
             <div class="pillar-card">
-              <div class="pillar-icon green"><i class="hgi hgi-stroke hgi-charity text-white text-2xl"></i></div>
+              <div class="pillar-icon green"><i class="hgi hgi-stroke hgi-charity text-green text-2xl"></i></div>
               <div class="pillar-title">Giving Back</div>
               <div class="pillar-desc">Graduates mentoring the next generation — a tradition of service.</div>
             </div>
             <div class="pillar-card">
-              <div class="pillar-icon red"><i class="hgi hgi-stroke hgi-idea-01 text-white text-2xl"></i></div>
+              <div class="pillar-icon red"><i class="hgi hgi-stroke hgi-idea-01 text-red text-2xl"></i></div>
               <div class="pillar-title">Innovation</div>
               <div class="pillar-desc">Embracing AI and technology to build the alumni community of tomorrow.</div>
             </div>
@@ -336,8 +335,7 @@
       </div>
       <div class="events-grid">
         <div class="event-card featured reveal">
-          <div class="event-img" style="font-size:5rem;">🎓
-            <div class="pattern"></div>
+          <div class="event-img bg-[url('/assets/imgs/graduates.jpg')] bg-cover bg-center">
             <div class="event-date-badge"><span class="day">14</span>Dec</div>
           </div>
           <div class="event-body">
@@ -364,7 +362,7 @@
           </div>
         </div>
         <div class="event-card reveal reveal-delay-1">
-          <div class="event-img" style="height:140px;font-size:3rem;">💼
+          <div class="event-img bg-[url('/assets/imgs/career.jpg')] bg-cover bg-center">
             <div class="event-date-badge"><span class="day">22</span>Nov</div>
           </div>
           <div class="event-body">
@@ -387,7 +385,7 @@
           </div>
         </div>
         <div class="event-card reveal reveal-delay-2">
-          <div class="event-img" style="height:140px;font-size:3rem;">🌐
+          <div class="event-img bg-[url('/assets/imgs/ai.jpg')] bg-cover bg-center">
             <div class="event-date-badge"><span class="day">05</span>Dec</div>
           </div>
           <div class="event-body">
@@ -413,7 +411,7 @@
           </div>
         </div>
         <div class="event-card reveal reveal-delay-3">
-          <div class="event-img" style="height:140px;font-size:3rem;">📚
+          <div class="event-img bg-[url('/assets/imgs/research.jpg')] bg-cover bg-center">
             <div class="event-date-badge"><span class="day">18</span>Jan</div>
           </div>
           <div class="event-body">
@@ -555,7 +553,7 @@
             </div>
             <div class="chat-body" id="chatBody">
               <div class="chat-msg bot">
-                <div class="chat-bubble">Assalām ‘Alaykum! 👋 Welcome to AlumnConnect. I'm AlumnBot — your 24/7 IUIU
+                <div class="chat-bubble">Assalām ‘Alaykum! Welcome to AlumnConnect. I'm AlumnBot — your 24/7 IUIU
                   alumni assistant. How can I help you today?</div>
                 <div class="chat-time">Just now</div>
               </div>
@@ -566,19 +564,24 @@
               <div class="chat-msg bot">
                 <div class="chat-bubble">Great! I found <strong>3 active mentors</strong> in Software Engineering. The
                   top match is <strong>Ahmad Mubarak</strong> (5 yrs exp, specializes in web dev & AI). Would you like
-                  me to send a connection request? 🎯</div>
+                  me to send a connection request?</div>
                 <div class="chat-time">Just now</div>
               </div>
             </div>
-            <div class="chat-suggestions">
-              <button class="suggestion-chip" onclick="addSuggestion(this)">📋 Get my transcript</button>
-              <button class="suggestion-chip" onclick="addSuggestion(this)">📅 Upcoming events</button>
-              <button class="suggestion-chip" onclick="addSuggestion(this)">🎓 Verify certificate</button>
+            <div class="chat-suggestions pt-3.5 px-5 pb-4">
+              <button class="suggestion-chip flex items-center justify-normal gap-1" onclick="addSuggestion(this)"><i
+                  class="hgi hgi-stroke hgi-rounded hgi-graduation-scroll text-base"></i> Get my transcript</button>
+              <button class="suggestion-chip flex items-center justify-normal gap-1" onclick="addSuggestion(this)"><i
+                  class="hgi hgi-stroke hgi-rounded hgi-calendar-03 text-base"></i> Upcoming events</button>
+              <button class="suggestion-chip flex items-center justify-normal gap-1" onclick="addSuggestion(this)"><i
+                  class="hgi hgi-stroke hgi-rounded hgi-diploma text-base"></i> Verify certificate</button>
             </div>
             <div class="chat-input-row">
               <input class="chat-input" type="text" placeholder="Type a message..." id="chatInput"
                 onkeypress="handleKey(event)" />
-              <button class="chat-send" onclick="sendMsg()">➤</button>
+              <button class="chat-send" onclick="sendMsg()">
+                <i class="hgi hgi-stroke hgi-rounded hgi-sent-02 text-xl"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -597,50 +600,47 @@
       </div>
       <div class="news-grid">
         <div class="news-card featured reveal">
-          <div class="news-img" style="height:260px;">🏫
+          <div class="news-img bg-[url('/assets/imgs/graduates.jpg')] bg-cover bg-center" style="height:260px;">
             <div class="news-img-overlay">
               <span class="news-cat tag-green"
                 style="background:var(--green);color:white;padding:4px 10px;border-radius:4px;">Institutional</span>
             </div>
           </div>
           <div class="news-body">
-            <div class="news-date">📅 November 18, 2025</div>
+            <div class="news-date"><i class="hgi hgi-stroke hgi-rounded hgi-calendar-01"></i> November 18, 2025</div>
             <h3 class="news-title">IUIU Launches New Faculty of Engineering — Applications Open for 2026 Intake</h3>
             <p class="news-excerpt">The Islamic University in Uganda has announced the establishment of its Faculty of
               Engineering and Technology, offering programmes in Civil, Electrical and Computer Engineering.
               Applications open January 2026.</p>
-            <a href="#" class="news-read">Read Full Story</a>
           </div>
         </div>
         <div class="news-card reveal reveal-delay-1">
-          <div class="news-img">🏆
+          <div class="news-img bg-[url('/assets/imgs/graduates.jpg')] bg-cover bg-center">
             <div class="news-img-overlay">
               <span class="news-cat tag-red"
                 style="background:var(--red);color:white;padding:4px 10px;border-radius:4px;">Achievement</span>
             </div>
           </div>
           <div class="news-body">
-            <div class="news-date">📅 November 10, 2025</div>
+            <div class="news-date"><i class="hgi hgi-stroke hgi-rounded hgi-calendar-01"></i> November 10, 2025</div>
             <h3 class="news-title">IUIU Graduate Wins East Africa Tech Innovation Award</h3>
             <p class="news-excerpt">Alumni Tariq Ssentamu, BIT Class of 2018, wins the prestigious EAT Innovation Prize
               for his agri-tech startup revolutionizing smallholder farming in Uganda.</p>
-            <a href="#" class="news-read">Read More</a>
           </div>
         </div>
         <div class="news-card reveal reveal-delay-2">
-          <div class="news-img" style="background:linear-gradient(135deg,var(--red),#6b1111);">🌍
-            <div class="news-img-overlay">
+          <div class="news-img bg-[url('/assets/imgs/graduates.jpg')] bg-cover bg-center">
+            <div class=" news-img-overlay">
               <span class="news-cat"
                 style="background:var(--gold);color:var(--charcoal);padding:4px 10px;border-radius:4px;font-size:0.68rem;font-weight:700;">Partnership</span>
             </div>
           </div>
           <div class="news-body">
-            <div class="news-date">📅 October 28, 2025</div>
+            <div class="news-date"><i class="hgi hgi-stroke hgi-rounded hgi-calendar-01"></i> October 28, 2025</div>
             <h3 class="news-title">IUIU Signs MoU with University of Madinah for Academic Exchange</h3>
             <p class="news-excerpt">A landmark memorandum of understanding will enable IUIU students and faculty to
               participate in exchange programmes and joint research with the Islamic University of Madinah, Saudi
               Arabia.</p>
-            <a href="#" class="news-read">Read More</a>
           </div>
         </div>
       </div>
@@ -699,12 +699,18 @@
         <div class="footer-col">
           <h4>Contact</h4>
           <ul class="footer-links">
-            <li>📍 Mbale Campus, Uganda</li>
-            <li>📍 Female Campus, Kabojja</li>
-            <li>📍 Kampala Campus, Kampala</li>
-            <li>📍 Arua Campus, Arua</li>
-            <li>📧 alumni@iuiu.ac.ug</li>
-            <li>📞 +256 454 432 300</li>
+            <li class="flex items-center justify-start gap-1.5"><i
+                class="hgi hgi-stroke hgi-rounded hgi-location-03"></i> Mbale Campus, Uganda</li>
+            <li class="flex items-center justify-start gap-1.5"><i
+                class="hgi hgi-stroke hgi-rounded hgi-location-03"></i> Female Campus, Kabojja</li>
+            <li class="flex items-center justify-start gap-1.5"><i
+                class="hgi hgi-stroke hgi-rounded hgi-location-03"></i> Kampala Campus, Kampala</li>
+            <li class="flex items-center justify-start gap-1.5"><i
+                class="hgi hgi-stroke hgi-rounded hgi-location-03"></i> Arua Campus, Arua</li>
+            <li class="flex items-center justify-start gap-1.5"><i class="hgi hgi-stroke hgi-rounded hgi-mail-open"></i>
+              alumni@iuiu.ac.ug</li>
+            <li class="flex items-center justify-start gap-1.5"><i class="hgi hgi-stroke hgi-rounded hgi-call-add"></i>
+              +256 454 432 300</li>
             <li>Privacy Policy</li>
             <li>Terms of Use</li>
           </ul>
@@ -713,7 +719,9 @@
       <div class="footer-bottom">
         <p>&copy;<span id="date"></span> Islamic University in Uganda — Alumni Relations Office. All rights reserved.
         </p>
-        <p>Built with ❤️ by <a href="#">IUIU Computer Science Dept.</a> · AlumnConnect Project</p>
+        <p class="text-center">Built with love
+          by <a href="#">IUIU Computer Science
+            Dept.</a> · AlumnConnect Project</p>
       </div>
     </div>
     <div class="footer-green-line"></div>
@@ -723,7 +731,18 @@
     const openM = document.getElementById("open"),
       closeM = document.getElementById("close"),
       divs = document.querySelector(".divs"),
+      nv = document.querySelector("nav"),
       nav = document.getElementById("navbar");
+
+    window.addEventListener("scroll", () => {
+      if (scrollY > 5) {
+        nv.classList.add("fixed")
+        nv.classList.add("shadow-md")
+      } else {
+        nv.classList.remove("fixed")
+        nv.classList.remove("shadow-md")
+      }
+    });
 
     divs.addEventListener("click", () => {
       openM.classList.toggle("hidden");
@@ -767,10 +786,10 @@
 
     // ── CHAT DEMO ──
     const botReplies = {
-      'transcript': "Sure! To request your official transcript, I'll need your Student/Alumni ID. Please type it, or I can guide you to the online portal. Processing takes 3–5 working days. 📋",
-      'event': "📅 Upcoming events: \n1. Career Fair – Nov 22, Kampala\n2. Alumni Webinar – Dec 5, Online\n3. Annual Reunion – Dec 14, Mbale\n\nWhich would you like to register for?",
-      'certificate': "To verify your IUIU certificate, please provide: ①Your full name ②Certificate number ③Graduation year. Verification is free and takes 24–48 hours. 🎓",
-      'default': "Wa Alaikum Assalam! 😊 I can help you with mentorship, transcripts, events, certificate verification, and more. What would you like to know?"
+      'transcript': "Sure! To request your official transcript, I'll need your Student/Alumni ID. Please type it, or I can guide you to the online portal. Processing takes 3–5 working days.",
+      'event': "Upcoming events: \n1. Career Fair – Nov 22, Kampala\n2. Alumni Webinar – Dec 5, Online\n3. Annual Reunion – Dec 14, Mbale\n\nWhich would you like to register for?",
+      'certificate': "To verify your IUIU certificate, please provide: 1. Your full name \n2. Certificate number \n3. Graduation year. Verification is free and takes 24–48 hours.",
+      'default': "Wa Alaykumu Ssalām! I can help you with mentorship, transcripts, events, certificate verification, and more. What would you like to know?"
     };
 
     function getReply(msg) {
